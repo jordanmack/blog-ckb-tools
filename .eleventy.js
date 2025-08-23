@@ -58,7 +58,7 @@ export default function(eleventyConfig) {
 	return {
 		dir: {
 			input: "src",
-			output: "site"
+			output: "docs"
 		},
 		// Use Nunjucks for templating
 		markdownTemplateEngine: "njk",
