@@ -120,4 +120,4 @@ Always use lowercase "tools" in domain references:
 
 ## License
 
-MIT License - see LICENSE file for details.
+Proprietary - see LICENSE file for details.
