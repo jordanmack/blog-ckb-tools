@@ -9,6 +9,9 @@ export default function(eleventyConfig) {
 	
 	// Copy favicon
 	eleventyConfig.addPassthroughCopy("src/favicon.png");
+	
+	// Copy CNAME for GitHub Pages custom domain
+	eleventyConfig.addPassthroughCopy("src/CNAME");
 
 	// Add date filters
 	eleventyConfig.addFilter("date", function(date, format) {
