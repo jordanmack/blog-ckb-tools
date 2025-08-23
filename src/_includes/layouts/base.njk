@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% if title %}{{ title }} | {% endif %}{{ site.title or "Blog.CKB.tools" }}</title>
+	<meta name="description" content="{{ description or site.description or 'A simple blog built with 11ty and Tailwind CSS' }}">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png">
+	
+	<!-- Theme Detection -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	</script>
+</head>
+<body class="min-h-full flex flex-col">
+	{% include "partials/header.njk" %}
+	
+	<main class="flex-1">
+		{{ content | safe }}
+	</main>
+	
+	{% include "partials/footer.njk" %}
+</body>
+</html>

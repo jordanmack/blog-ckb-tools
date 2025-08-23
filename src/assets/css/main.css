@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
+
+@layer theme {
+	:root {
+		--font-family-sans: 'Open Sans', system-ui, sans-serif;
+	}
+}
+
+@layer base {
+	html {
+		color-scheme: light dark;
+	}
+	
+	body {
+		font-family: var(--font-family-sans);
+		@apply text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 transition-colors;
+	}
+}
+
+@layer components {
+	.prose {
+		@apply max-w-none;
+	}
+	
+	.prose h1,
+	.prose h2,
+	.prose h3,
+	.prose h4,
+	.prose h5,
+	.prose h6 {
+		@apply text-gray-900 dark:text-gray-100;
+	}
+	
+	.prose p,
+	.prose li {
+		@apply text-gray-700 dark:text-gray-300;
+	}
+	
+	.prose a {
+		@apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200;
+	}
+	
+	.prose code {
+		@apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+	}
+	
+	.prose pre {
+		@apply bg-gray-100 dark:bg-gray-800 rounded-lg overflow-x-auto;
+	}
+	
+	.prose pre code {
+		@apply bg-transparent p-0;
+	}
+}
