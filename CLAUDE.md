@@ -27,7 +27,7 @@ blog.ckb.tools/
 │   │   └── css/          # Stylesheets.
 │   ├── posts/            # Blog post markdown files.
 │   └── index.njk         # Homepage.
-├── _site/                 # Build output directory.
+├── docs/                 # Build output directory.
 ├── .eleventy.js          # 11ty configuration.
 ├── tailwind.config.js    # Tailwind configuration.
 ├── postcss.config.js     # PostCSS configuration.
@@ -93,7 +93,7 @@ When testing the website:
 
 ## Build Configuration
 - Input directory: `src/`.
-- Output directory: `_site/`.
+- Output directory: `docs/`.
 - CSS processing: PostCSS with Tailwind and Autoprefixer.
 - Markdown processing: 11ty with syntax highlighting plugin.
 
