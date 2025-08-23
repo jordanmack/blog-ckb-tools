@@ -66,7 +66,7 @@ src/
 ├── posts/             # Blog posts (Markdown)
 └── index.njk          # Homepage
 
-_site/                 # Build output (ignored by git)
+_site/                 # Build output (committed for GitHub Pages)
 ```
 
 ### Writing Posts
@@ -87,12 +87,29 @@ Your content here...
 
 ## Deployment
 
+### GitHub Pages
+
 1. Build the site:
    ```bash
    bun run build
    ```
 
-2. Deploy the `_site/` directory to your hosting provider.
+2. Add and commit the built files:
+   ```bash
+   git add .
+   git commit -m "Build and deploy site"
+   git push origin main
+   ```
+
+3. Configure GitHub Pages:
+   - Go to your repository Settings → Pages
+   - Source: Deploy from a branch
+   - Branch: `main` / `(root)` 
+   - The site will be available at `https://username.github.io/repository-name`
+
+### Other Hosting Providers
+
+Deploy the `_site/` directory to your hosting provider after running `bun run build`.
 
 ## Branding Convention
 
