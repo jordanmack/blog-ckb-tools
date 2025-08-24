@@ -9,12 +9,18 @@
 
 @layer base {
 	html {
-		color-scheme: light dark;
+		color-scheme: dark;
 	}
 	
 	body {
 		font-family: var(--font-family-sans);
-		@apply text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 transition-colors;
+		color: #dddddd;
+		background-color: #151515;
+		background-image: url('/assets/images/nervos-shapes-bg.jpg');
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
+		background-attachment: fixed;
 	}
 }
 
@@ -29,27 +35,139 @@
 	.prose h4,
 	.prose h5,
 	.prose h6 {
-		@apply text-gray-900 dark:text-gray-100;
+		color: #dddddd;
 	}
 	
 	.prose p,
 	.prose li {
-		@apply text-gray-700 dark:text-gray-300;
+		color: #dddddd;
 	}
 	
 	.prose a {
-		@apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200;
+		color: #00cc9b;
+	}
+	
+	.prose a:hover {
+		color: rgba(0, 204, 155, 0.8);
 	}
 	
 	.prose code {
-		@apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+		background-color: #1a1a1a;
+		color: #e5e5e5;
+		padding: 0.125rem 0.375rem;
+		border-radius: 0.25rem;
+		font-size: 0.875rem;
 	}
 	
 	.prose pre {
-		@apply bg-gray-100 dark:bg-gray-800 rounded-lg overflow-x-auto;
+		background-color: #1a1a1a;
+		border: 1px solid #333333;
+		border-radius: 0.5rem;
+		overflow-x: auto;
+		padding: 1rem;
 	}
 	
 	.prose pre code {
 		@apply bg-transparent p-0;
+	}
+	
+	/* Restore list styles for prose content */
+	.prose ul {
+		list-style-type: disc;
+		padding-left: 1.5rem;
+		margin-bottom: 1rem;
+	}
+	
+	.prose ol {
+		list-style-type: decimal;
+		padding-left: 1.5rem;
+		margin-bottom: 1rem;
+	}
+	
+	.prose li {
+		margin-bottom: 0.5rem;
+	}
+	
+	/* Add proper spacing for paragraphs and headings */
+	.prose p {
+		margin-bottom: 1rem;
+	}
+	
+	.prose h2 {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		font-size: 1.5rem;
+		font-weight: 600;
+	}
+	
+	.prose h3 {
+		margin-top: 1.5rem;
+		margin-bottom: 0.75rem;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+}
+
+@layer components {
+	/* Navigation styles */
+	.nav-link {
+		color: #dddddd;
+		font-weight: 500;
+		transition: color 0.15s ease;
+		padding: 0.75rem 0;
+		margin: 0 0.25rem;
+		min-height: 44px;
+		display: flex;
+		align-items: center;
+	}
+	
+	@media (max-width: 768px) {
+		.nav-link {
+			padding: 1rem 0.5rem;
+			margin: 0.25rem 0;
+		}
+	}
+	
+	.nav-link:hover {
+		color: #00cc9b;
+	}
+	
+	/* Header and footer backgrounds */
+	.header-bg {
+		background-color: rgba(21, 21, 21, 0.9);
+	}
+	
+	.footer-bg {
+		background-color: rgba(21, 21, 21, 0.9);
+	}
+	
+	/* Content text styles */
+	.content-text {
+		color: #dddddd;
+	}
+	
+	/* Green accent links */
+	.link-green {
+		color: #00cc9b;
+		transition: color 0.15s ease;
+	}
+	
+	.link-green:hover {
+		color: rgba(0, 204, 155, 0.8);
+	}
+	
+	/* Tag styling */
+	.tag {
+		background-color: rgba(0, 204, 155, 0.2);
+		color: #00cc9b;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.75rem;
+		border-radius: 0.25rem;
+		display: inline-block;
+	}
+	
+	/* Better border visibility */
+	.border-visible {
+		border-color: #444444;
 	}
 }

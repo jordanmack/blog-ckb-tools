@@ -4,10 +4,10 @@ layout: layouts/base.njk
 
 <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 	<header class="mb-8">
-		<h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+		<h1 class="text-4xl font-bold content-text mb-4">
 			{{ title }}
 		</h1>
-		<div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+		<div class="text-sm content-text mb-4">
 			<time datetime="{{ date | date('Y-m-d') }}">
 				{{ date | date("F j, Y") }}
 			</time>
@@ -16,7 +16,7 @@ layout: layouts/base.njk
 		<div class="flex flex-wrap gap-2">
 			{% for tag in tags %}
 			{% if tag != "post" %}
-			<span class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 text-sm rounded-full">
+			<span class="tag">
 				{{ tag }}
 			</span>
 			{% endif %}
@@ -29,9 +29,9 @@ layout: layouts/base.njk
 		{{ content | safe }}
 	</div>
 
-	<footer class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+	<footer class="mt-12 pt-8 border-t border-visible">
 		<div class="flex justify-between items-center">
-			<a href="/" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
+			<a href="/" class="link-green font-medium">
 				← Back to posts
 			</a>
 		</div>

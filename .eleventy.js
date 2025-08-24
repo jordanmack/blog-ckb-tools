@@ -4,8 +4,8 @@ export default function(eleventyConfig) {
 	// Add syntax highlighting plugin
 	eleventyConfig.addPlugin(syntaxHighlight);
 
-	// Copy CSS files to output
-	eleventyConfig.addPassthroughCopy("src/assets/css/**/*.css");
+	// Copy images to output
+	eleventyConfig.addPassthroughCopy("src/assets/images");
 	
 	// Copy favicon
 	eleventyConfig.addPassthroughCopy("src/favicon.png");
