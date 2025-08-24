@@ -1,21 +1,45 @@
 ---
+pagination:
+  data: collections.tagList
+  size: 1
+  alias: tag
+  addAllPagesToCollections: true
 layout: layouts/base.njk
-title: "Home"
+permalink: /tags/{{ tag }}/
+eleventyComputed:
+  title: "Posts tagged '{{ tag }}'"
 ---
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+	<header class="mb-8">
+		<h1 class="text-3xl font-bold content-text mb-4">
+			Posts tagged "{{ tag }}"
+		</h1>
+		<p class="content-text">
+			<a href="/" class="link-green">← Back to all posts</a>
+		</p>
+	</header>
+
 	<section>
+		{% set taggedPosts = collections.post | reverse %}
+		{% set filteredPosts = [] %}
 		
-		{% if collections.post and collections.post.length > 0 %}
+		{%- for post in taggedPosts -%}
+			{%- if post.data.tags and (tag in post.data.tags) -%}
+				{%- set filteredPosts = (filteredPosts.push(post), filteredPosts) -%}
+			{%- endif -%}
+		{%- endfor -%}
+
+		{% if filteredPosts.length > 0 %}
 		<div class="space-y-8">
-			{% for post in collections.post | reverse %}
+			{% for post in filteredPosts %}
 			<article class="border-b border-visible pb-8 last:border-b-0">
 				<header class="mb-4">
-					<h3 class="text-xl font-semibold mb-2">
+					<h2 class="text-xl font-semibold mb-2">
 						<a href="{{ post.url }}" class="content-text link-green">
 							{{ post.data.title }}
 						</a>
-					</h3>
+					</h2>
 					<div class="text-sm mb-3 content-text">
 						<time datetime="{{ post.data.date | date('Y-m-d') }}">
 							{{ post.data.date | date("F j, Y") }}
@@ -23,10 +47,10 @@ title: "Home"
 					</div>
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
-						{% for tag in post.data.tags %}
-						{% if tag != "post" %}
-						<a href="/tags/{{ tag }}/" class="tag hover:bg-opacity-30 transition-colors">
-							{{ tag }}
+						{% for postTag in post.data.tags %}
+						{% if postTag != "post" %}
+						<a href="/tags/{{ postTag }}/" class="tag hover:bg-opacity-30 transition-colors">
+							{{ postTag }}
 						</a>
 						{% endif %}
 						{% endfor %}
@@ -51,7 +75,7 @@ title: "Home"
 		{% else %}
 		<div class="text-center py-12">
 			<p class="text-lg content-text">
-				No posts yet. Check back soon for new content!
+				No posts found with the tag "{{ tag }}".
 			</p>
 		</div>
 		{% endif %}

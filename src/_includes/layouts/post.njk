@@ -16,9 +16,9 @@ layout: layouts/base.njk
 		<div class="flex flex-wrap gap-2">
 			{% for tag in tags %}
 			{% if tag != "post" %}
-			<span class="tag">
+			<a href="/tags/{{ tag }}/" class="tag hover:bg-opacity-30 transition-colors">
 				{{ tag }}
-			</span>
+			</a>
 			{% endif %}
 			{% endfor %}
 		</div>

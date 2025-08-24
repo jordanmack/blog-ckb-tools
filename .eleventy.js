@@ -54,6 +54,25 @@ export default function(eleventyConfig) {
 		return new Date().getFullYear().toString();
 	});
 
+	// Create tag collections
+	eleventyConfig.addCollection("tagList", function(collectionApi) {
+		const tagSet = new Set();
+		collectionApi.getAll().forEach(function(item) {
+			if ("tags" in item.data) {
+				let tags = item.data.tags;
+				if (typeof tags === "string") {
+					tags = [tags];
+				}
+				for (const tag of tags) {
+					if (tag !== "post") { // Exclude the "post" tag
+						tagSet.add(tag);
+					}
+				}
+			}
+		});
+		return Array.from(tagSet).sort();
+	});
+
 	// Set input and output directories
 	return {
 		dir: {
