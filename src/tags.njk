@@ -33,7 +33,7 @@ eleventyComputed:
 		{% if filteredPosts.length > 0 %}
 		<div class="space-y-8">
 			{% for post in filteredPosts %}
-			<article class="border-b border-visible pb-8 last:border-b-0">
+			<article class="post-card pb-8">
 				<header class="mb-4">
 					<h2 class="text-xl font-semibold mb-2">
 						<a href="{{ post.url }}" class="content-text link-green">
@@ -45,6 +45,7 @@ eleventyComputed:
 							{{ post.data.date | date("F j, Y") }}
 						</time>
 					</div>
+					{# 
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
 						{% for postTag in post.data.tags %}
@@ -56,10 +57,11 @@ eleventyComputed:
 						{% endfor %}
 					</div>
 					{% endif %}
+					#}
 				</header>
 				
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncate(150) %}
+					{% set excerpt = post.templateContent | striptags | truncate(300) %}
 					{{ excerpt }}
 				</div>
 				

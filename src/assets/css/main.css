@@ -159,4 +159,16 @@
 	.border-visible {
 		border-color: #444444;
 	}
+	
+	/* Post card hover effects */
+	.post-card {
+		transition: background-color 0.15s ease;
+		border-radius: 0.5rem;
+		padding: 1.5rem;
+		margin: -1.5rem;
+	}
+	
+	.post-card:hover {
+		background-color: rgba(255, 255, 255, 0.05);
+	}
 }
