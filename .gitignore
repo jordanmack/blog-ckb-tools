@@ -243,3 +243,6 @@ _tmp/
 # Bun specific
 bun.lockb
 .bun/
+
+# Playwright MCP testing artifacts
+.playwright-mcp/
