@@ -8,9 +8,23 @@ layout: layouts/base.njk
 			{{ title }}
 		</h1>
 		<div class="text-sm content-text mb-4">
-			<time datetime="{{ date | date('Y-m-d') }}">
-				{{ date | date("F j, Y") }}
-			</time>
+			{% if author %}
+			<div class="mb-2">
+				By {{ author }}
+			</div>
+			{% endif %}
+			<div>
+				<time datetime="{{ date | date('Y-m-d') }}">
+					{{ date | date("F j, Y") }}
+				</time>
+				{% if updated and updated != date %}
+				<span class="ml-4">
+					• Updated <time datetime="{{ updated | date('Y-m-d') }}">
+						{{ updated | date("F j, Y") }}
+					</time>
+				</span>
+				{% endif %}
+			</div>
 		</div>
 		{# 
 		{% if tags and tags.length > 0 %}

@@ -171,4 +171,13 @@
 	.post-card:hover {
 		background-color: rgba(255, 255, 255, 0.05);
 	}
+	
+	/* Pinned post styling */
+	.post-card-pinned {
+		background-color: rgba(255, 255, 255, 0.08);
+	}
+	
+	.post-card-pinned:hover {
+		background-color: rgba(255, 255, 255, 0.12);
+	}
 }

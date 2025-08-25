@@ -8,7 +8,63 @@ title: "Home"
 		
 		{% if collections.post and collections.post.length > 0 %}
 		<div class="space-y-8">
-			{% for post in collections.post | reverse %}
+			{# Display pinned posts first #}
+			{% set pinnedPosts = [] %}
+			{% set regularPosts = [] %}
+			
+			{%- for post in collections.post | reverse -%}
+				{%- if post.data.pinned -%}
+					{%- set pinnedPosts = (pinnedPosts.push(post), pinnedPosts) -%}
+				{%- else -%}
+					{%- set regularPosts = (regularPosts.push(post), regularPosts) -%}
+				{%- endif -%}
+			{%- endfor -%}
+			
+			{# Render pinned posts #}
+			{% for post in pinnedPosts %}
+			<article class="post-card post-card-pinned pb-8">
+				<header class="mb-4">
+					<h3 class="text-xl font-semibold mb-2">
+						<a href="{{ post.url }}" class="content-text link-green">
+							{{ post.data.title }}
+						</a>
+					</h3>
+					<div class="text-sm mb-3 content-text">
+						<time datetime="{{ post.data.date | date('Y-m-d') }}">
+							{{ post.data.date | date("F j, Y") }}
+						</time>
+					</div>
+					{# 
+					{% if post.data.tags and post.data.tags.length > 0 %}
+					<div class="flex flex-wrap gap-2 mb-3">
+						{% for tag in post.data.tags %}
+						{% if tag != "post" %}
+						<a href="/tags/{{ tag }}/" class="tag hover:bg-opacity-30 transition-colors">
+							{{ tag }}
+						</a>
+						{% endif %}
+						{% endfor %}
+					</div>
+					{% endif %}
+					#}
+				</header>
+				
+				<div class="mb-4 content-text">
+					{% set excerpt = post.templateContent | striptags | truncate(300) %}
+					{{ excerpt }}
+				</div>
+				
+				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-green">
+					Read more
+					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+					</svg>
+				</a>
+			</article>
+			{% endfor %}
+			
+			{# Render regular posts #}
+			{% for post in regularPosts %}
 			<article class="post-card pb-8">
 				<header class="mb-4">
 					<h3 class="text-xl font-semibold mb-2">

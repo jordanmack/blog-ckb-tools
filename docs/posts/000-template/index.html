@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Welcome to the Blog | Blog.CKB.tools</title>
+	<title>POST TITLE HERE | Blog.CKB.tools</title>
 	<meta name="description" content="A simple blog built with 11ty and Tailwind CSS">
 	
 	<!-- CSS -->
@@ -45,13 +45,17 @@
 <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 	<header class="mb-8">
 		<h1 class="text-4xl font-bold content-text mb-4">
-			Welcome to the Blog
+			POST TITLE HERE
 		</h1>
 		<div class="text-sm content-text mb-4">
 			
+			<div class="mb-2">
+				By Author Name
+			</div>
+			
 			<div>
-				<time datetime="2024-08-23">
-					August 22, 2024
+				<time datetime="2024-01-01">
+					December 31, 2023
 				</time>
 				
 			</div>
@@ -60,19 +64,16 @@
 	</header>
 
 	<div class="prose prose-lg max-w-none">
-		<p>Welcome to Blog.CKB.tools! This is your first blog post demonstrating the capabilities of this 11ty-powered static site.</p>
-<h2>Features</h2>
-<p>This blog template includes:</p>
-<ul>
-<li><strong>Responsive design</strong> with Tailwind CSS</li>
-<li><strong>Dark/light mode</strong> based on system preferences</li>
-<li><strong>Syntax highlighting</strong> for code blocks</li>
-<li><strong>Clean typography</strong> with Open Sans font</li>
-<li><strong>SEO-friendly</strong> URLs with slug-based permalinks</li>
-</ul>
+		<h1>Post Title</h1>
+<p>Introduction paragraph goes here. This should hook the reader and explain what they'll learn from this post.</p>
+<h2>Main Heading</h2>
+<p>Content goes here. Use clear, concise language and break up text with headings and paragraphs.</p>
+<h3>Subsection</h3>
+<p>More detailed content or examples.</p>
 <h2>Code Example</h2>
-<p>Here's a simple JavaScript function to demonstrate syntax highlighting:</p>
-<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">greetBlogVisitors</span><span class="token punctuation">(</span><span class="token parameter">name</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<p>When including code, provide context and explain what it does:</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token comment">// Example JavaScript function</span>
+<span class="token keyword">function</span> <span class="token function">greetReader</span><span class="token punctuation">(</span><span class="token parameter">name</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
 	console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Welcome to the blog, </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">!</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 	
 	<span class="token keyword">if</span> <span class="token punctuation">(</span>name <span class="token operator">===</span> <span class="token string">"developer"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -83,25 +84,37 @@
 <span class="token punctuation">}</span>
 
 <span class="token comment">// Usage</span>
-<span class="token keyword">const</span> message <span class="token operator">=</span> <span class="token function">greetBlogVisitors</span><span class="token punctuation">(</span><span class="token string">"developer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> message <span class="token operator">=</span> <span class="token function">greetReader</span><span class="token punctuation">(</span><span class="token string">"developer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>message<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-<h2>Writing Posts</h2>
-<p>To create new posts, simply:</p>
-<ol>
-<li>Create a new <code>.md</code> file in the <code>src/posts/</code> directory</li>
-<li>Add frontmatter with title, slug, date, and layout</li>
-<li>Write your content in Markdown</li>
-<li>The site will automatically generate the post page</li>
-</ol>
-<h2>What's Next?</h2>
-<p>You can customize this template by:</p>
+<h2>Lists</h2>
+<p>Use lists to organize information clearly:</p>
+<h3>Bullet Points</h3>
 <ul>
-<li>Modifying the color scheme in <code>tailwind.config.js</code></li>
-<li>Adding new layouts in <code>src/_includes/layouts/</code></li>
-<li>Creating additional components in <code>src/_includes/partials/</code></li>
-<li>Customizing the CSS in <code>src/assets/css/main.css</code></li>
+<li>Important point number one</li>
+<li>Another key concept</li>
+<li>Final takeaway</li>
 </ul>
-<p>Happy blogging!</p>
+<h3>Numbered Steps</h3>
+<ol>
+<li>First step in the process</li>
+<li>Second step to follow</li>
+<li>Final step to complete</li>
+</ol>
+<h2>Images</h2>
+<p>Images for this post should be placed in: <code>/assets/images/posts/[id]/</code></p>
+<p>For example, if your post ID is &quot;ckb-005&quot;, put images in <code>/assets/images/posts/ckb-005/</code></p>
+<pre class="language-markdown"><code class="language-markdown"><span class="token url"><span class="token operator">!</span>[<span class="token content">Descriptive alt text</span>](<span class="token url">/assets/images/posts/ckb-xxx/screenshot.png</span>)</span></code></pre>
+<h2>Best Practices</h2>
+<ul>
+<li>Write clear, descriptive headings</li>
+<li>Use code blocks for technical examples</li>
+<li>Include alt text for all images</li>
+<li>Keep paragraphs concise</li>
+<li>End with actionable conclusions</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Summarize the key points and provide next steps or further reading suggestions.</p>
+<p>This template includes all standard metadata fields and follows the Blog.CKB.tools content guidelines.</p>
 
 	</div>
 
