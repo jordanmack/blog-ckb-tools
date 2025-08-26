@@ -22,8 +22,6 @@ permalink: false
 eleventyExcludeFromCollections: true
 ---
 
-# Post Title
-
 Introduction paragraph goes here. This should hook the reader and explain what they'll learn from this post.
 
 ## Main Heading
