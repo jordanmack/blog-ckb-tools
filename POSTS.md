@@ -23,7 +23,8 @@ To create a new post:
    - **Required**: Yes, absolutely required.
    - **Format**: URL-friendly string.
    - **Guideline**: Should be representative of the content.
-   - **Example**: `slug: "understanding-eleventy"` (not just "002" or random).
+   - **IMPORTANT**: Do NOT include numerical prefixes in slugs.
+   - **Example**: `slug: "understanding-eleventy"` (not `slug: "002-understanding-eleventy"`).
 
 3. **`date`** - Original authoring date.
    - **Required**: Yes.
