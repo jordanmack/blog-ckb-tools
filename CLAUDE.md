@@ -101,3 +101,4 @@ When testing the website:
 - The development server should be running at all times during development.
 - If changes don't appear, check that the dev server is running.
 - Use Playwright MCP for all browser testing and verification.
+- For RFC documents, prefer those found in the Nervos Network RFCs repo on GitHub to those found on Nervos Talk forums.

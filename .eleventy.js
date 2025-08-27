@@ -1,4 +1,5 @@
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
+import * as cheerio from "cheerio";
 
 export default function(eleventyConfig) {
 	// Add syntax highlighting plugin
@@ -71,6 +72,18 @@ export default function(eleventyConfig) {
 			}
 		});
 		return Array.from(tagSet).sort();
+	});
+
+	// Add transform to wrap tables for mobile scrolling
+	eleventyConfig.addTransform("wrap-tables", function(content) {
+		if ((this.page.outputPath || "").endsWith(".html")) {
+			const $ = cheerio.load(content);
+			$('table').each(function() {
+				$(this).wrap('<div style="overflow-x: auto;"></div>');
+			});
+			return $.html();
+		}
+		return content;
 	});
 
 	// Set input and output directories
