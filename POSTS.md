@@ -26,29 +26,35 @@ To create a new post:
    - **IMPORTANT**: Do NOT include numerical prefixes in slugs.
    - **Example**: `slug: "understanding-eleventy"` (not `slug: "002-understanding-eleventy"`).
 
-3. **`date`** - Original authoring date.
+3. **`permalink`** - URL path.
+   - **Required**: Yes, to control the URL.
+   - **Format**: `/posts/{{ slug }}/`.
+   - **Purpose**: Uses the slug value to create the URL path.
+   - **Example**: `permalink: /posts/{{ slug }}/`.
+
+4. **`date`** - Original authoring date.
    - **Required**: Yes.
    - **Format**: YYYY-MM-DD.
    - **Rule**: Use the date the post was originally authored, not published.
    - **Example**: `date: 2024-08-22`.
 
-4. **`layout`** - Template.
+5. **`layout`** - Template.
    - **Required**: Yes.
    - **Value**: Always `layouts/post.njk` for blog posts.
    - **Example**: `layout: layouts/post.njk`.
 
 ### Standard Fields (Should have)
-5. **`tags`** - Category tags.
+6. **`tags`** - Category tags.
    - **Required**: Should be created even though not currently displayed.
    - **Format**: Array, always include "post" as first tag.
    - **Example**: `tags: ["post", "tutorial", "web-development"]`.
 
-6. **`author`** - Post author.
+7. **`author`** - Post author.
    - **Required**: Recommended.
    - **Format**: String.
    - **Example**: `author: "John Doe"`.
 
-7. **`id`** - Unique identifier.
+8. **`id`** - Unique identifier.
    - **Required**: Recommended.
    - **Format**: Short reference string for tracking.
    - **Purpose**: 
@@ -57,13 +63,13 @@ To create a new post:
    - **Example**: `id: "ckb-001"` → Images go in `/assets/images/posts/ckb-001/`.
 
 ### Optional Fields
-8. **`updated`** - Last modification date.
+9. **`updated`** - Last modification date.
    - **Required**: No.
    - **Format**: YYYY-MM-DD.
    - **Rule**: Only add when updates actually exist to a published post.
    - **Example**: `updated: 2024-08-25`.
 
-9. **`pinned`** - Featured status.
+10. **`pinned`** - Featured status.
    - **Required**: No (optional).
    - **Format**: Boolean.
    - **Default**: false if not specified.
@@ -78,8 +84,9 @@ To create a new post:
 
 ## Key Rules Summary
 
-- ✅ **title** and **slug** are absolutely required.
+- ✅ **title**, **slug**, and **permalink** are absolutely required.
 - ✅ **slug** should meaningfully represent the content.
+- ✅ **permalink** should use the slug: `/posts/{{ slug }}/`.
 - ✅ **date** = original authoring date (not publication date).
 - ✅ **tags** should be created even if hidden on frontend.
 - ✅ **id** determines the image folder: `/assets/images/posts/[id]/`.
@@ -93,6 +100,7 @@ To create a new post:
 # REQUIRED FIELDS
 title: "Your Post Title Here"
 slug: "representative-url-slug"
+permalink: /posts/{{ slug }}/
 date: 2024-08-24
 layout: layouts/post.njk
 

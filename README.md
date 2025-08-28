@@ -114,7 +114,8 @@ Deploy the `docs/` directory to your hosting provider after running `bun run bui
 ## Branding Convention
 
 Always use lowercase "tools" in domain references:
-- ✅ "Blog.CKB.tools" 
+- ✅ "Blog.ckb.tools" 
+- ✅ "BLOG.ckb.tools" 
 - ✅ "CKB.tools"
 - ❌ "Blog.CKB.Tools" or "CKB.Tools"
 

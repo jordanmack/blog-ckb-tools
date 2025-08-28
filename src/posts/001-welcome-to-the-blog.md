@@ -4,6 +4,7 @@ slug: "001-welcome-to-the-blog"
 date: 2024-08-23
 layout: layouts/post.njk
 tags: ["post", "welcome", "getting-started"]
+eleventyExcludeFromCollections: true
 ---
 
 Welcome to Blog.CKB.tools! This is your first blog post demonstrating the capabilities of this 11ty-powered static site.

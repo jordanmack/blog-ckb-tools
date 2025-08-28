@@ -7,6 +7,7 @@ tags: ["post", "blogging", "writing", "career"]
 author: "Blog Team"
 pinned: true
 updated: 2024-08-25
+eleventyExcludeFromCollections: true
 ---
 
 In an age of social media snippets and fleeting content, blogging remains one of the most powerful tools for sharing knowledge, building expertise, and connecting with others. Here's why blogging should be part of your professional toolkit.

@@ -5,6 +5,7 @@
 # REQUIRED FIELDS
 title: "POST TITLE HERE"
 slug: "representative-url-slug"
+permalink: /posts/{{ slug }}/
 date: 2024-01-01
 layout: layouts/post.njk
 
@@ -18,7 +19,6 @@ id: "ckb-xxx"  # Used for image folder: /assets/images/posts/ckb-xxx/
 # updated: 2024-01-02  # Only add when post is actually updated
 
 # EXCLUDE FROM SITE - REMOVE THIS LINE IN ACTUAL POSTS
-permalink: false
 eleventyExcludeFromCollections: true
 ---
 

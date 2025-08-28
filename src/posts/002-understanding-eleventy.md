@@ -4,6 +4,7 @@ slug: "002-understanding-eleventy"
 date: 2024-08-22
 layout: layouts/post.njk
 tags: ["post", "eleventy", "static-sites", "tutorial"]
+eleventyExcludeFromCollections: true
 ---
 
 11ty (Eleventy) is a powerful static site generator that transforms your content into fast, static websites. Let's explore what makes it special.

@@ -180,6 +180,9 @@
   }
 }
 @layer utilities {
+  .fixed {
+    position: fixed;
+  }
   .static {
     position: static;
   }
@@ -209,9 +212,6 @@
   }
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
-  }
-  .contents {
-    display: contents;
   }
   .flex {
     display: flex;
@@ -254,6 +254,9 @@
   }
   .border-collapse {
     border-collapse: collapse;
+  }
+  .transform {
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
   .resize {
     resize: both;
@@ -461,6 +464,7 @@
     border-radius: 0.5rem;
     overflow-x: auto;
     padding: 1rem;
+    margin-bottom: 1rem;
   }
   .prose pre code {
     background-color: transparent;
@@ -493,6 +497,34 @@
     margin-bottom: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
+  }
+  .prose table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  .prose th {
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem;
+    border: 1px solid #444444;
+    color: #dddddd;
+    min-width: 100px;
+    white-space: nowrap;
+  }
+  .prose td {
+    padding: 0.75rem;
+    border: 1px solid #444444;
+    vertical-align: top;
+    color: #dddddd;
+  }
+  .prose tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  .prose tr:hover {
+    background-color: rgba(255, 255, 255, 0.08);
   }
 }
 @layer components {
@@ -547,6 +579,26 @@
   .post-card-pinned:hover {
     background-color: rgba(255, 255, 255, 0.12);
   }
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
 }
 @property --tw-space-y-reverse {
   syntax: "*";
@@ -623,6 +675,11 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
       --tw-space-y-reverse: 0;
       --tw-border-style: solid;
       --tw-font-weight: initial;
