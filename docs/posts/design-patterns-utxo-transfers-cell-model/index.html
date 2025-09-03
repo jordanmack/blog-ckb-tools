@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="en" class="h-full"><head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Design Patterns: UTXO Transfers Using the Cell Model | Blog.CKB.tools</title>
+	<meta name="description" content="A simple blog built with 11ty and Tailwind CSS">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png">
+	
+	<!-- Theme Detection -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	</script>
+</head>
+<body class="min-h-full flex flex-col">
+	<header class="header-bg border-b border-visible">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex items-center justify-between" style="height: 42px;">
+			<!-- Site Logo/Title -->
+			<div class="flex-shrink-0">
+				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
+					BLOG<small>.ckb.tools</small>
+				</a>
+			</div>
+			
+			<!-- Navigation -->
+			<nav class="flex items-center">
+				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
+			</nav>
+		</div>
+	</div>
+</header>
+	
+	<main class="flex-1">
+		
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+	<header class="mb-8">
+		<h1 class="text-4xl font-bold content-text mb-4">
+			Design Patterns: UTXO Transfers Using the Cell Model
+		</h1>
+		<div class="text-sm content-text mb-4">
+			
+			<div class="mb-2">
+				By Jordan Mack
+			</div>
+			
+			<div>
+				<time datetime="2025-09-02">
+					September 1, 2025
+				</time>
+				
+			</div>
+		</div>
+		
+	</header>
+
+	<div class="prose prose-lg max-w-none">
+		<p>This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.</p>
+<p>State rent is essential because it ensures sustainable network economics and prevents out of control cost spirals. However, it introduces unique challenges that require innovative design patterns to maintain usability.</p>
+<p>Some of the transfer patterns mentioned in this document are tied directly to specific asset protocols. This document aims to focus specifically on the transfer patterns introduced, not the details of the asset protocols themselves.</p>
+<h2>Challenges of State Rent</h2>
+<p>State rent presents unique obstacles for UTXO-based token transfers that don't exist in traditional blockchain models. Understanding these challenges is essential for designing effective transfer patterns.</p>
+<p>CKB implements state rent through a simple economic model: <strong>1 CKB token equals 1 byte of permanent on-chain storage capacity</strong>. When you create a cell containing smart contracts, assets such as tokens and NFTs, or any other data, the cell's capacity must cover the storage cost of all these components. This capacity remains locked the entire time the asset exists on-chain. When the assets are destroyed and the cell is consumed, the locked CKB is returned.</p>
+<p>The amount of CKB that must be locked depends on the amount of required on-chain data, which can vary from asset to asset. For the most basic asset, the CKB native token, the cost is 61 CKB. For an SUDT token, the cost is 142 CKB. For assets such as NFTs, the cost varies but is usually in the 150-200 CKB range. For fully on-chain DOBs, the cost can easily exceed thousands of CKB.</p>
+<p>The challenge is that when you send an asset to someone else, a cell must be created to hold it. This introduces additional costs to the sender if they pay the state rent for the receiver. However, there are multiple patterns to mitigate this depending on the situation.</p>
+<h2>Cell Model Asset Transfer Design Patterns</h2>
+<p>Several patterns can be used to address state rent costs for asset transfers. Each pattern balances simplicity, cost distribution, and trust requirements differently.</p>
+<pre><code>Diagram Conventions:
+- [Content] = Cell (contains assets and CKB capacity).
+- (Content) = Descriptive notes about the state.
+- TX fees not included for simplicity.
+</code></pre>
+<h3>Sender Pays State Rent Pattern</h3>
+<p>The sender covers all state rent costs for the receiver's new cell. The asset transfer creates a cell owned by the receiver with capacity paid entirely by the sender.</p>
+<pre><code>Task: Send 50 CAT coin to receiver.
+
+Initial State:
+Sender: [200 CAT coin + 500 CKB]    Receiver: (no assets or cells)
+
+After Transfer:
+Sender: [150 CAT coin + 358 CKB]    Receiver: [50 CAT coin + 142 CKB]
+        (remaining in cell)                   (new asset cell)
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Most simple and compatible method to implement.</li>
+<li>No CKB requirements for receiver.</li>
+<li>Single step process.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Sender must pay extra CKB for the receiver's cell.</li>
+<li>Scales poorly as CKB price increases.</li>
+<li>Costs create high barriers for frequent transfers.</li>
+</ul>
+<h3>Send and Refund Pattern</h3>
+<p>The sender pays state rent initially, then the receiver refunds the CKB capacity back to the sender. This requires trust on the part of the sender, and the receiver must actively participate after receiving the asset.</p>
+<pre><code>Task: Send 50 DOG coin to receiver.
+
+Initial State:
+Sender: [200 DOG coin + 500 CKB]    Receiver: [300 CKB]
+
+After Transfer:
+Sender: [150 DOG coin + 358 CKB]    Receiver: [50 DOG coin + 142 CKB]
+        (remaining in cell)                   (new asset cell)
+                                              [300 CKB]
+                                              (original cell)
+
+After Refund:
+Sender: [150 DOG coin + 358 CKB]    Receiver: [50 DOG coin + 142 CKB]
+        (original cell)                       (new asset cell)
+        [142 CKB]                             [158 CKB]
+        (new cell for refunded CKB)           (remaining from original)
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's cell.</li>
+<li>Conceptually simple process that is easy to implement.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must have CKB to pay the refund.</li>
+<li>Receiver must be trusted to send back the CKB.</li>
+<li>Requires automated bots for receiving applications.</li>
+<li>No automated solutions exist for user to user transfers.</li>
+</ul>
+<h3>Anyone-Can-Pay (ACP) Pattern</h3>
+<p>The receiver creates a special cell which unlocks for any user when it detects that it is receiving additional assets, but remains securely locked in other scenarios. This is similar to a mail drop box, where anyone can make a deposit but it's not possible to take anything back out.</p>
+<p>The receiver must create an ACP cell ahead of time to hold the specific asset they want to receive. This only needs to be done once per asset, and then it can receive indefinitely.</p>
+<pre><code>Task: Send 50 PIG coin to receiver.
+
+Initial State:
+Sender: [200 PIG coin + 500 CKB]    Receiver: [300 CKB]
+
+After ACP Cell Creation (One-time):
+Sender: [200 PIG coin + 500 CKB]    Receiver: [ACP Cell: 142 CKB]
+        (unchanged)                           (new ACP cell)
+                                              [158 CKB]
+                                              (remaining regular cell)
+
+After Transfer:
+Sender: [150 PIG coin + 500 CKB]    Receiver: [ACP Cell: 50 PIG coin + 142 CKB]
+        (remaining in cell)                   (assets added to ACP cell)
+                                              [158 CKB]
+                                              (remaining regular cell)
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's cell (after refund).</li>
+<li>Mature and tested pattern and implementation.</li>
+<li>No trust requirements.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must have CKB to create the ACP cell.</li>
+<li>ACP cells must be pre-deployed by receivers for each asset.</li>
+<li>Limited wallet and tooling support.</li>
+<li>More complex smart contract logic.</li>
+</ul>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md">Anyone-Can-Pay Lock Script RFC</a> - Official specification for ACP lock script.</li>
+<li><a href="https://github.com/cryptape/anyone-can-pay">Anyone-Can-Pay Repository</a> - Current implementation and documentation.</li>
+<li><a href="https://github.com/cryptape/omnilock">OmniLock Repository</a> - Advanced lock script that also supports anyone-can-pay functionality.</li>
+</ul>
+<h3>Cheque Cell Pattern</h3>
+<p>Implements a mechanism similar to a bank cheque where the sender creates a special cell that can be "cashed" by the receiver. The receiver must provide their own CKB capacity to claim the asset, and the CKB used for the cheque cell is returned to the sender. If the cheque remains unclaimed after 6 epochs, the sender can withdraw the assets and reclaim the capacity.</p>
+<pre><code>Task: Send 50 DUCK coin to receiver.
+
+Initial State:
+Sender: [200 DUCK coin + 500 CKB]    Receiver: [300 CKB]
+
+After Cheque Creation:
+Sender: [150 DUCK coin + 338 CKB]    Receiver: [300 CKB]
+        (remaining in cell)                    (unchanged)
+        [Cheque Cell: 50 DUCK coin + 162 CKB]
+        (new cheque cell)
+
+After Claim:
+Sender: [150 DUCK coin + 338 CKB]    Receiver: [50 DUCK coin + 142 CKB]
+        (original cell)                        (new asset cell)
+        [162 CKB]                              [158 CKB]
+        (returned from cheque)                 (remaining regular cell)
+
+After Withdraw (if unclaimed after 6 epochs):
+Sender: [150 DUCK coin + 338 CKB]    Receiver: [300 CKB]
+        (original cell)                        (unchanged)
+        [50 DUCK coin + 162 CKB]
+        (withdrawn from cheque)
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's cell.</li>
+<li>Does not require the receiver to pre-deploy asset receiver cells.</li>
+<li>No trust requirements.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must have CKB to claim assets to a cell they own.</li>
+<li>Unclaimed assets require the sender to undergo another step to recover.</li>
+<li>Very limited wallet and tooling support.</li>
+<li>More complex smart contract logic.</li>
+</ul>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0039-cheque-lock/0039-cheque-lock.md">Cheque Lock RFC</a> - Official RFC specification for cheque lock.</li>
+<li><a href="https://github.com/nervosnetwork/ckb-cheque-script">Cheque Lock Script</a> - Official cheque script implementation and documentation.</li>
+<li><a href="https://docs.nervos.org/docs/essays/cheque/">Cheque Cell Tutorial</a> - Step-by-step implementation tutorial.</li>
+<li><a href="https://github.com/nervosnetwork/ckb-cheque-script/tree/master/examples">CKB-Cheque Examples</a> - Usage examples and integration guides.</li>
+</ul>
+<h3>CoTA (Compact Token Aggregator) Pattern</h3>
+<p>CoTA is an NFT protocol which uses Sparse Merkle Trees (SMT) to manage large amounts of data off-chain while maintaining security guarantees on-chain. CoTA can be thought of as a layer 1.5 protocol that operates internally using the account-model, storing both data and ownership information in a distributed cell structure on top of UTXOs.</p>
+<p>Each user creates a single permanent CoTA cell that becomes part of the distributed asset registry. Inside of each CoTA cell is a single SMT root hash consisting of exactly 32 bytes that provide provable information about the assets contained within the cell. The amount of data remains the same in a CoTA cell regardless of how many NFTs or how much data is associated with the user. An unlimited amount of NFTs can be created and held without increasing state rent costs.</p>
+<p>CoTA builds on its distributed cell structure to add an innovative transfer mechanism that eliminate the immediate onboarding costs for new users to receive assets. CoTA assets operate on layer 1.5, which uses internal ownership tracking that is separate from the cell model. When assets are transferred on CoTA, they are marked for recipients without leaving the sender's cell. This means that CoTA NFTs effectively bypass the state rent requirements, allowing NFTs to be minted for near-zero cost and can be sent to new users who hold no CKB. The caveat being that the receiver cannot transfer an NFT again until they complete the one-time CoTA cell registration process and complete the claim process which moves the NFT from the original sender's CoTA cell to their own CoTA cell.</p>
+<p>The CoTA transfer process involves four distinct stages:</p>
+<div style="overflow-x: auto;"><table>
+<thead>
+<tr>
+<th style="text-align:left">Stage</th>
+<th style="text-align:left">Sender</th>
+<th style="text-align:left">Receiver</th>
+<th style="text-align:left">Transfer&nbsp;Capability</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Initial</td>
+<td style="text-align:left">Owns NFT</td>
+<td style="text-align:left">No NFT</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">NFT resides in sender's cell.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Transfer</td>
+<td style="text-align:left">No NFT</td>
+<td style="text-align:left">Owns NFT (unclaimed)</td>
+<td style="text-align:left">Non-transferable.</td>
+<td style="text-align:left">Ownership marked, NFT still in sender's cell.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Registration</td>
+<td style="text-align:left">No NFT</td>
+<td style="text-align:left">Owns NFT (unclaimed)</td>
+<td style="text-align:left">Non-transferable.</td>
+<td style="text-align:left">Receiver creates CoTA cell for claiming.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Claim</td>
+<td style="text-align:left">No NFT</td>
+<td style="text-align:left">Owns NFT<br>(claimed)</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">NFT moved to receiver's cell.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The registration process has a one-time fee of 150CKB, which is non-refundable since the cell that is created effectively becomes part of CoTA's distributed cell structure. Registration is required to claim an NFT that has been marked for transfer, but it is not a requirement. Recipients will see unclaimed NFTs in their wallets just like normal NFTs, but they must register and claim if they want to send the NFT to someone else.</p>
+<p>The following diagram illustrates how these stages work in practice with specific CKB capacity movements:</p>
+<pre><code>Task: Send 1 FISH NFT to receiver.
+
+Initial State:
+Sender: [CoTA Cell: 1 FISH NFT + 150 CKB]    Receiver: [150 CKB]
+        (NFT in CoTA cell; NFT owned by sender)        (regular cell)
+Aggregator: Sender owns 1 FISH NFT. Transfer possible.
+
+After Transfer (Ownership Marked):
+Sender: [CoTA Cell: 1 FISH NFT + 150 CKB]    Receiver: [150 CKB]
+        (NFT unmoved; owned by receiver)               (regular cell)
+Aggregator: Receiver owns 1 FISH NFT. Unclaimed; transfer unavailable.
+
+After Registration (Required for receiver claim; optional):
+Sender: [CoTA Cell: 1 FISH NFT + 150 CKB]    Receiver: [CoTA Cell: 150 CKB]
+        (unchanged)                                    (converted to CoTA cell)
+Aggregator: Receiver owns 1 FISH NFT. Unclaimed; transfer unavailable.
+
+After Claim (Optional):
+Sender: [CoTA Cell: 0 FISH NFT + 150 CKB]    Receiver: [CoTA Cell: 1 FISH NFT + 150 CKB]
+        (NFT moved out of sender's cell)               (NFT moved to receiver's cell)
+Aggregator: Receiver owns 1 FISH NFT. Transfer possible.
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's CoTA cell.</li>
+<li>Does not require the receiver to pre-deploy asset receiver cells.</li>
+<li>Zero state rent cost for unclaimed transfers; claiming is not strictly required.</li>
+<li>No trust requirements.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must have CKB to register a CoTA cell before claiming.</li>
+<li>CoTA's layer 1.5 protocol has some incompatibilities with other protocols.</li>
+<li>Requires an off-chain aggregator service for interpreting data.</li>
+<li>Limited wallet and tooling support.</li>
+<li>Transactions are more complex and must be generated using the CoTA SDK in conjunction with an aggregator.</li>
+</ul>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://www.cotadev.io/docs/protocols/cota_main">CoTA Protocol Overview</a> - Official protocol documentation.</li>
+<li><a href="https://github.com/nervina-labs/cota-sdk-js">CoTA SDK JavaScript</a> - JavaScript SDK for CoTA integration.</li>
+<li><a href="https://github.com/nervina-labs/cota-sdk-js/tree/develop/example">CoTA SDK Examples</a> - Usage examples and integration guides.</li>
+</ul>
+<h3>Public Relay Cells Pattern (ACP Enhancement; Experimental)</h3>
+<p>Public relay cells are an optional enhancement to the Anyone-Can-Pay pattern that address the concurrency limitations by introducing public storage cells that act as temporary holding areas for token transfers. This pattern solves the collision problem where multiple simultaneous transfers to the same ACP cell would fail due to the deterministic nature of transfers on CKB.</p>
+<p>In addition to increasing throughput to a single address by allowing parallel deposits, relay cells can serve as temporary holding areas for new users who haven't yet deployed their own ACP cells. This allows new users to receive tokens without any upfront CKB requirement, dramatically lowering the barrier to entry into the ecosystem.</p>
+<p>The relay cells are serviced by a decentralized network of fulfillment bots that monitor deposits and deliver tokens to their final destinations. These bots compete to process transfers, earning small fees for providing this collection and delivery service. This creates a permissionless marketplace where anyone can operate a fulfillment bot, ensuring system resilience without single points of failure while creating earning opportunities for operators providing fulfillment services.</p>
+<pre><code>Task: Send 50 BIRD coin to receiver (via relay cells).
+
+Initial State:
+Sender: [200 BIRD coin + 500 CKB]    Receiver: [ACP Cell: 142 CKB]
+        (sender's cell)                       (empty ACP cell)
+Relay Pool: [Relay Cell 1: 142 CKB]
+            [Relay Cell 2: 142 CKB] 
+            [Relay Cell 3: 142 CKB]
+            (multiple relay cells available)
+
+After Deposit to Relay:
+Sender: [150 BIRD coin + 500 CKB]    Receiver: [ACP Cell: 142 CKB]
+        (remaining in cell)                   (unchanged)
+Relay Pool: [Relay Cell 1: 50 BIRD coin + 142 CKB]
+            [Relay Cell 2: 142 CKB]           (tokens stored with target)
+            [Relay Cell 3: 142 CKB]
+            
+After Service Collection:
+Sender: [150 BIRD coin + 500 CKB]    Receiver: [ACP Cell: 50 BIRD coin + 142 CKB]
+        (unchanged)                           (tokens delivered by service)
+Relay Pool: [Relay Cell 1: 142 CKB]
+            [Relay Cell 2: 142 CKB]          (relay cell cleared)
+            [Relay Cell 3: 142 CKB]
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's cell.</li>
+<li>Does not require the receiver to pre-deploy asset receiver cells (ACP cells).</li>
+<li>No trust requirements.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must eventually have CKB to claim assets to a cell they own.</li>
+<li>Unclaimed assets may be returned or forfeited.</li>
+<li>Emerging incomplete standard with no implementation.</li>
+</ul>
+<p><strong>Challenges:</strong>
+As this standard is still a work in progress, several challenges remain to be addressed. One concern is the potential for relay cell clogging if tokens remain unclaimed for extended periods. Proposed solutions include implementing asset forfeiture mechanisms after certain timeframes, which would incentivize timely claiming while preventing permanent blockage of relay resources.</p>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://talk.nervos.org/t/a-ckb-efficient-and-anti-collision-xudt-transfer-scheme-on-ckb-l1/8765">Public Relay Cells Discussion</a> - Original proposal and community discussion on Nervos Talk.</li>
+</ul>
+<h3>Harbor Pattern (Fractal Standard; Experimental)</h3>
+<p>Harbor is a pattern within the Fractal token standard which is currently in early development stages. The Fractal standard takes inspiration from CoTA, using Sparse Merkle Trees (SMT) to manage asset data off-chain while maintaining security guarantees on-chain. However, Fractal utilizes the Cell Model for ownership designation instead of a layer 1.5 account model structure. Harbors have similarities to public relay cells in being publicly available areas for asset storage, but Harbors can be used both as temporary storage and permanent storage.</p>
+<p>A Fractal cell contains a single SMT root hash consisting of exactly 32 bytes, similar to a CoTA cell. The amount of data always remains the same regardless of how many assets are associated with the user, allowing for an unlimited amount of assets to be held without increasing state rent costs. A Fractal cell uses normal locks and allows the owner to control all assets within the cell.</p>
+<p>A Harbor cell is a special kind of Fractal cell, which is created by anyone for public use. Anyone can store a Fractal asset in any Harbor by paying a small "parking fee" to the operator. Multiple Harbors can be created by anyone to create a competitive marketplace that keeps fees reasonable while providing parallelism for concurrent transfers. Should an operator wish to close their Harbor to recoup the CKB being used for state rent, they are free to do so at any time. However, if there are any Fractal assets stored within the harbor they are trying to close, they must migrate them to another open harbor and pay the parking fee for each asset.</p>
+<p>Harbor cells can serve as holding areas for new users who haven't yet acquired any CKB to create their own Fractal cell, allowing them to bypass the state rent requirements. Since Fractal cells can hold any number of assets, they never will experience a "clogging" scenario that could happen with a public relay cell. For this reason, a Fractal cell is suitable for permanent storage. However, some smart contracts may not be able to operate normally with assets in a Harbor, and may still require withdrawal to a normal Fractal cell.</p>
+<p><strong>Note:</strong> The Fractal Standard and Harbor pattern are in very early development and specifications may change significantly.</p>
+<p>The Harbor transfer process involves up to four distinct stages:</p>
+<div style="overflow-x: auto;"><table>
+<thead>
+<tr>
+<th style="text-align:left">Stage</th>
+<th style="text-align:left">Sender</th>
+<th style="text-align:left">Receiver</th>
+<th style="text-align:left">Transfer&nbsp;Capability</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Initial</td>
+<td style="text-align:left">Owns assets</td>
+<td style="text-align:left">No assets</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">Assets reside in sender's cell or a Harbor cell.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Transfer</td>
+<td style="text-align:left">No assets</td>
+<td style="text-align:left">Owns assets (in&nbsp;Harbor)</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">Ownership marked, assets transferred to Harbor cell.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Registration</td>
+<td style="text-align:left">No assets</td>
+<td style="text-align:left">Owns assets (in&nbsp;Harbor)</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">Receiver creates Fractal cell for claiming. Optional.</td>
+</tr>
+<tr>
+<td style="text-align:left">After Claim</td>
+<td style="text-align:left">No assets</td>
+<td style="text-align:left">Owns assets</td>
+<td style="text-align:left">Transferable.</td>
+<td style="text-align:left">Assets moved to receiver's cell. Optional.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The registration process requires 150CKB to create a Fractal cell, which is refundable if the cell is later destroyed. Registration is required to claim assets that have been stored in a Harbor, but it is not strictly necessary for ownership. Recipients use Harbor-stored assets as if they were holding them directly and can transfer them to other users as needed.</p>
+<p>The following diagram illustrates how these stages work in practice with specific CKB capacity movements:</p>
+<pre><code>Task: Send 75 WOLF coin to receiver.
+
+Initial State:
+Sender: [Fractal Cell: 75 WOLF coin + 150 CKB]    Receiver: [150 CKB]
+        (assets in Fractal cell; owned by sender)          (regular cell)
+Aggregator: Sender owns 75 WOLF coin. Transfer possible.
+
+After Transfer to Harbor:
+Sender: [Fractal Cell: 0 WOLF coin + 150 CKB]    Receiver: [150 CKB]
+        (assets moved to Harbor; owned by receiver)        (regular cell)
+Harbor: [Harbor Cell: 75 WOLF coin + 150 CKB]
+        (assets stored; owned by receiver)
+Aggregator: Receiver owns 75 WOLF coin. In Harbor; transfer possible.
+
+After Registration (Required for receiver claim; optional):
+Sender: [Fractal Cell: 0 WOLF coin + 150 CKB]    Receiver: [Fractal Cell: 150 CKB]
+        (unchanged)                                        (converted to Fractal cell)
+Harbor: [Harbor Cell: 75 WOLF coin + 150 CKB]
+        (assets stored; owned by receiver)
+Aggregator: Receiver owns 75 WOLF coin. In Harbor; transfer possible.
+
+After Claim (Optional):
+Sender: [Fractal Cell: 0 WOLF coin + 150 CKB]    Receiver: [Fractal Cell: 75 WOLF coin + 150 CKB]
+        (unchanged)                                        (assets moved to receiver's cell)
+Harbor: [Harbor Cell: 150 CKB]
+        (assets in harbor cleared after claim)
+Aggregator: Receiver owns 75 WOLF coin. Transfer possible.
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Sender does not pay the CKB for the receiver's cell.</li>
+<li>Does not require the receiver to pre-deploy asset receiver cells.</li>
+<li>No trust requirements.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Receiver must eventually have CKB to claim assets to a cell they own.</li>
+<li>Requires an off-chain aggregator service for interpreting data.</li>
+<li>Transactions are more complex and must be generated using the Fractal SDK in conjunction with an aggregator.</li>
+<li>Emerging incomplete standard with no implementation.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>The Cell Model's state rent requirement creates unique challenges for asset transfers that have sparked innovative design patterns that offer different trade-offs between simplicity, cost, trust, and user experience.</p>
+<p>This document explores seven distinct transfer patterns for addressing state rent challenges in UTXO-based asset transfers:</p>
+<ol>
+<li>
+<p><strong>Sender Pays State Rent</strong> - The most straightforward approach where senders cover all capacity costs for receivers' new cells. While simple to implement and requiring no CKB from receivers, it scales poorly as CKB prices increase and creates barriers for frequent transfers.</p>
+</li>
+<li>
+<p><strong>Send and Refund</strong> - A trust-based pattern where senders initially pay state rent, then receivers refund the capacity. Conceptually simple but requires active receiver participation and trust, with limited automated solutions for user-to-user transfers.</p>
+</li>
+<li>
+<p><strong>Anyone-Can-Pay (ACP)</strong> - A mature, trustless solution using special cells that unlock when receiving assets. Requires receivers to pre-deploy cells for each asset type and has concurrency limitations, but offers proven reliability for users.</p>
+</li>
+<li>
+<p><strong>Cheque Cell</strong> - Implements a bank cheque-like mechanism where senders create claimable cells with automatic withdrawal after timeout. Provides trustless transfers without pre-deployment requirements but adds complexity for managing unclaimed assets.</p>
+</li>
+<li>
+<p><strong>CoTA (Compact Token Aggregator)</strong> - An innovative layer 1.5 protocol using Sparse Merkle Trees for off-chain data management. Virtually eliminates state rent for unclaimed transfers and allows near zero-cost minting, but requires off-chain aggregator infrastructure and has protocol incompatibilities.</p>
+</li>
+<li>
+<p><strong>Public Relay Cells (Experimental)</strong> - An ACP enhancement using intermediate public storage cells to address concurrency limitations. Enables parallel deposits and serves new users without upfront CKB requirements, but relies on decentralized fulfillment bots and remains in experimental stages.</p>
+</li>
+<li>
+<p><strong>Harbor (Fractal Standard; Experimental)</strong> - An emerging pattern within the Fractal token standard that combines the use of Sparse Merkle Trees for off-chain data management with decentralized public cells for asset storage. Allows for near zero-cost minting and eliminates state rent for newly onboarded users. However, the standard is in very early development with no current implementation.</p>
+</li>
+</ol>
+<h3>Which Pattern to Use?</h3>
+<p><strong>For Simple Applications:</strong></p>
+<ul>
+<li>Use "Sender Pays State Rent" for low-volume transfers where simplicity matters most.</li>
+<li>Consider "Send and Refund" for applications which inherently require trust and the pattern offers few drawbacks.</li>
+</ul>
+<p><strong>For Production Applications:</strong></p>
+<ul>
+<li>Choose "Anyone-Can-Pay" for mature applications where deposits are made to an application where pre-deploying ACP cells is possible.</li>
+<li>Select "Cheque Cell" when receivers cannot pre-deploy cells but trustless transfers are essential.</li>
+<li>Consider "CoTA" for NFT applications where low-cost NFTs and unclaimed transfers provide significant user experience benefits.</li>
+</ul>
+<p><strong>For Future Applications:</strong></p>
+<ul>
+<li>Evaluate "Public Relay Cells" as a solution to scale ACP's concurrency limitations.</li>
+<li>Monitor "Harbor" development for future ultra-low-cost asset solutions.</li>
+</ul>
+
+	</div>
+
+	<footer class="mt-12 pt-8 border-t border-visible">
+		<div class="flex justify-between items-center">
+			<a href="/" class="link-green font-medium">
+				← Back to posts
+			</a>
+		</div>
+	</footer>
+</article>
+	</main>
+	
+	<footer class="footer-bg border-t border-visible mt-auto">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div class="text-center">
+			<p class="text-xs" style="color: #999999;">
+				© 2021-2025 blog.ckb.tools. All rights reserved.
+			</p>
+		</div>
+	</div>
+</footer>
+
+</body></html>
