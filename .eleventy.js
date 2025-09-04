@@ -1,9 +1,33 @@
 import syntaxHighlight from "@11ty/eleventy-plugin-syntaxhighlight";
 import * as cheerio from "cheerio";
+import markdownIt from "markdown-it";
+import markdownItAnchor from "markdown-it-anchor";
+import markdownItToc from "markdown-it-table-of-contents";
+import { DateTime } from "luxon";
 
 export default function(eleventyConfig) {
 	// Add syntax highlighting plugin
 	eleventyConfig.addPlugin(syntaxHighlight);
+
+	// Configure markdown-it with anchor and TOC plugins
+	const markdownItOptions = {
+		html: true,
+		breaks: false,
+	};
+
+	const markdownLib = markdownIt(markdownItOptions)
+		.use(markdownItAnchor, {
+			permalink: markdownItAnchor.permalink.headerLink({
+				safariReaderFix: true,
+			}),
+		})
+		.use(markdownItToc, {
+			includeLevel: [2, 3], // Include h2 and h3 headings to show patterns
+			containerClass: "table-of-contents",
+			listType: "ul", // Unordered list
+		});
+
+	eleventyConfig.setLibrary("md", markdownLib);
 
 	// Copy images to output
 	eleventyConfig.addPassthroughCopy("src/assets/images");
@@ -16,25 +40,23 @@ export default function(eleventyConfig) {
 
 	// Add date filters
 	eleventyConfig.addFilter("date", function(date, format) {
-		const d = new Date(date);
+		// Convert JS Date via UTC then to Los Angeles timezone, preserving date values
+		const dt = DateTime.fromJSDate(date, { zone: 'UTC' })
+			.setZone('America/Los_Angeles', { keepLocalTime: true });
 		
 		if (format === "Y") {
-			return d.getFullYear().toString();
+			return dt.toFormat('yyyy');
 		}
 		
 		if (format === "Y-m-d") {
-			return d.toISOString().split('T')[0];
+			return dt.toFormat('yyyy-MM-dd');
 		}
 		
 		if (format === "F j, Y") {
-			return d.toLocaleDateString('en-US', { 
-				year: 'numeric', 
-				month: 'long', 
-				day: 'numeric' 
-			});
+			return dt.toLocaleString({ month: 'long', day: 'numeric', year: 'numeric' });
 		}
 		
-		return d.toISOString();
+		return dt.toISO();
 	});
 
 	// Add truncate filter

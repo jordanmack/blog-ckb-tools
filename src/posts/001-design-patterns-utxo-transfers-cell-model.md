@@ -13,7 +13,7 @@ id: "utxo-transfers"  # Used for image folder: /assets/images/posts/utxo-transfe
 
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
-# updated: 2026-01-02  # Only add when post is actually updated
+# updated: 2025-09-03 # Only add when post is actually updated
 ---
 
 This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.
@@ -21,6 +21,8 @@ This document explores different patterns for transferring digital assets betwee
 State rent is essential because it ensures sustainable network economics and prevents out of control cost spirals. However, it introduces unique challenges that require innovative design patterns to maintain usability.
 
 Some of the transfer patterns mentioned in this document are tied directly to specific asset protocols. This document aims to focus specifically on the transfer patterns introduced, not the details of the asset protocols themselves.
+
+[[toc]]
 
 ## Challenges of State Rent
 
@@ -367,7 +369,7 @@ Aggregator: Receiver owns 75 WOLF coin. Transfer possible.
 - Transactions are more complex and must be generated using the Fractal SDK in conjunction with an aggregator.
 - Emerging incomplete standard with no implementation.
 
-## Conclusion
+## Closing
 
 The Cell Model's state rent requirement creates unique challenges for asset transfers that have sparked innovative design patterns that offer different trade-offs between simplicity, cost, trust, and user experience.
 
