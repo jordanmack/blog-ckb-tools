@@ -141,6 +141,94 @@
 	.prose tr:hover {
 		background-color: rgba(255, 255, 255, 0.08);
 	}
+	
+	/* Table of Contents styling */
+	.prose .table-of-contents {
+		background-color: rgba(255, 255, 255, 0.05);
+		border: 1px solid #444444;
+		border-radius: 0.5rem;
+		padding: 1.5rem;
+		margin: 2rem 0;
+		position: relative;
+	}
+
+	
+	.prose .table-of-contents ul {
+		margin-bottom: 0;
+		list-style-type: disc;
+		padding-left: 1.5rem;
+	}
+
+	.prose .table-of-contents > ul {
+		list-style-type: square;
+	}
+	
+	.prose .table-of-contents > ul > li {
+		margin-bottom: 0.75rem;
+		font-weight: 600;
+		font-size: 1rem;
+	}
+
+	.prose .table-of-contents > ul > li:last-child {
+		margin-bottom: 0;
+	}
+
+	.prose .table-of-contents > ul > li::marker {
+		color: #dddddd;
+	}
+
+	.prose .table-of-contents > ul > li:hover::marker,
+	.prose .table-of-contents > ul > li:focus-within::marker {
+		color: #00cc9b;
+	}
+	
+	.prose .table-of-contents li ul {
+		margin-top: 0.5rem;
+		padding-left: 1.5rem;
+	}
+	
+	.prose .table-of-contents li ul li {
+		margin-bottom: 0.5rem;
+		font-weight: 500;
+		font-size: 0.95rem;
+	}
+
+	.prose .table-of-contents li ul li:last-child {
+		margin-bottom: 0;
+	}
+
+	.prose .table-of-contents li ul li::marker {
+		color: #dddddd;
+	}
+
+	.prose .table-of-contents li ul li:hover::marker,
+	.prose .table-of-contents li ul li:focus-within::marker {
+		color: #00cc9b;
+	}
+
+	.prose .table-of-contents li ul li ul {
+		padding-left: 1.5rem;
+	}
+
+	.prose .table-of-contents li ul li ul li {
+		margin-bottom: 0.4rem;
+		font-weight: 400;
+		font-size: 0.9rem;
+	}
+
+	.prose .table-of-contents li ul li ul li:last-child {
+		margin-bottom: 0;
+	}
+	
+	.prose .table-of-contents a {
+		color: #dddddd;
+		text-decoration: none;
+		transition: color 0.15s ease;
+	}
+	
+	.prose .table-of-contents a:hover {
+		color: #00cc9b;
+	}
 }
 
 @layer components {
