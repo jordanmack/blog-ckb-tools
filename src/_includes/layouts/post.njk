@@ -18,7 +18,7 @@ layout: layouts/base.njk
 					{{ date | date("F j, Y") }}
 				</time>
 				{% if updated and updated != date %}
-				<span class="ml-4">
+				<span class="">
 					• Updated <time datetime="{{ updated | date('Y-m-d') }}">
 						{{ updated | date("F j, Y") }}
 					</time>
