@@ -53,7 +53,7 @@
 			
 			<div>
 				<time datetime="2025-09-02">
-					September 1, 2025
+					September 2, 2025
 				</time>
 				
 			</div>
@@ -65,19 +65,20 @@
 		<p>This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.</p>
 <p>State rent is essential because it ensures sustainable network economics and prevents out of control cost spirals. However, it introduces unique challenges that require innovative design patterns to maintain usability.</p>
 <p>Some of the transfer patterns mentioned in this document are tied directly to specific asset protocols. This document aims to focus specifically on the transfer patterns introduced, not the details of the asset protocols themselves.</p>
-<h2>Challenges of State Rent</h2>
+<div class="table-of-contents"><ul><li><a href="#challenges-of-state-rent">Challenges of State Rent</a></li><li><a href="#cell-model-asset-transfer-design-patterns">Cell Model Asset Transfer Design Patterns</a><ul><li><a href="#sender-pays-state-rent-pattern">Sender Pays State Rent Pattern</a></li><li><a href="#send-and-refund-pattern">Send and Refund Pattern</a></li><li><a href="#anyone-can-pay-(acp)-pattern">Anyone-Can-Pay (ACP) Pattern</a></li><li><a href="#cheque-cell-pattern">Cheque Cell Pattern</a></li><li><a href="#cota-(compact-token-aggregator)-pattern">CoTA (Compact Token Aggregator) Pattern</a></li><li><a href="#public-relay-cells-pattern-(acp-enhancement%3B-experimental)">Public Relay Cells Pattern (ACP Enhancement; Experimental)</a></li><li><a href="#harbor-pattern-(fractal-standard%3B-experimental)">Harbor Pattern (Fractal Standard; Experimental)</a></li></ul></li><li><a href="#closing">Closing</a><ul><li><a href="#which-pattern-to-use%3F">Which Pattern to Use?</a></li></ul></li></ul></div>
+<h2 id="challenges-of-state-rent" tabindex="-1"><a class="header-anchor" href="#challenges-of-state-rent"><span>Challenges of State Rent</span></a></h2>
 <p>State rent presents unique obstacles for UTXO-based token transfers that don't exist in traditional blockchain models. Understanding these challenges is essential for designing effective transfer patterns.</p>
 <p>CKB implements state rent through a simple economic model: <strong>1 CKB token equals 1 byte of permanent on-chain storage capacity</strong>. When you create a cell containing smart contracts, assets such as tokens and NFTs, or any other data, the cell's capacity must cover the storage cost of all these components. This capacity remains locked the entire time the asset exists on-chain. When the assets are destroyed and the cell is consumed, the locked CKB is returned.</p>
 <p>The amount of CKB that must be locked depends on the amount of required on-chain data, which can vary from asset to asset. For the most basic asset, the CKB native token, the cost is 61 CKB. For an SUDT token, the cost is 142 CKB. For assets such as NFTs, the cost varies but is usually in the 150-200 CKB range. For fully on-chain DOBs, the cost can easily exceed thousands of CKB.</p>
 <p>The challenge is that when you send an asset to someone else, a cell must be created to hold it. This introduces additional costs to the sender if they pay the state rent for the receiver. However, there are multiple patterns to mitigate this depending on the situation.</p>
-<h2>Cell Model Asset Transfer Design Patterns</h2>
+<h2 id="cell-model-asset-transfer-design-patterns" tabindex="-1"><a class="header-anchor" href="#cell-model-asset-transfer-design-patterns"><span>Cell Model Asset Transfer Design Patterns</span></a></h2>
 <p>Several patterns can be used to address state rent costs for asset transfers. Each pattern balances simplicity, cost distribution, and trust requirements differently.</p>
 <pre><code>Diagram Conventions:
 - [Content] = Cell (contains assets and CKB capacity).
 - (Content) = Descriptive notes about the state.
 - TX fees not included for simplicity.
 </code></pre>
-<h3>Sender Pays State Rent Pattern</h3>
+<h3 id="sender-pays-state-rent-pattern" tabindex="-1"><a class="header-anchor" href="#sender-pays-state-rent-pattern"><span>Sender Pays State Rent Pattern</span></a></h3>
 <p>The sender covers all state rent costs for the receiver's new cell. The asset transfer creates a cell owned by the receiver with capacity paid entirely by the sender.</p>
 <pre><code>Task: Send 50 CAT coin to receiver.
 
@@ -100,7 +101,7 @@ Sender: [150 CAT coin + 358 CKB]    Receiver: [50 CAT coin + 142 CKB]
 <li>Scales poorly as CKB price increases.</li>
 <li>Costs create high barriers for frequent transfers.</li>
 </ul>
-<h3>Send and Refund Pattern</h3>
+<h3 id="send-and-refund-pattern" tabindex="-1"><a class="header-anchor" href="#send-and-refund-pattern"><span>Send and Refund Pattern</span></a></h3>
 <p>The sender pays state rent initially, then the receiver refunds the CKB capacity back to the sender. This requires trust on the part of the sender, and the receiver must actively participate after receiving the asset.</p>
 <pre><code>Task: Send 50 DOG coin to receiver.
 
@@ -131,7 +132,7 @@ Sender: [150 DOG coin + 358 CKB]    Receiver: [50 DOG coin + 142 CKB]
 <li>Requires automated bots for receiving applications.</li>
 <li>No automated solutions exist for user to user transfers.</li>
 </ul>
-<h3>Anyone-Can-Pay (ACP) Pattern</h3>
+<h3 id="anyone-can-pay-(acp)-pattern" tabindex="-1"><a class="header-anchor" href="#anyone-can-pay-(acp)-pattern"><span>Anyone-Can-Pay (ACP) Pattern</span></a></h3>
 <p>The receiver creates a special cell which unlocks for any user when it detects that it is receiving additional assets, but remains securely locked in other scenarios. This is similar to a mail drop box, where anyone can make a deposit but it's not possible to take anything back out.</p>
 <p>The receiver must create an ACP cell ahead of time to hold the specific asset they want to receive. This only needs to be done once per asset, and then it can receive indefinitely.</p>
 <pre><code>Task: Send 50 PIG coin to receiver.
@@ -170,7 +171,7 @@ Sender: [150 PIG coin + 500 CKB]    Receiver: [ACP Cell: 50 PIG coin + 142 CKB]
 <li><a href="https://github.com/cryptape/anyone-can-pay">Anyone-Can-Pay Repository</a> - Current implementation and documentation.</li>
 <li><a href="https://github.com/cryptape/omnilock">OmniLock Repository</a> - Advanced lock script that also supports anyone-can-pay functionality.</li>
 </ul>
-<h3>Cheque Cell Pattern</h3>
+<h3 id="cheque-cell-pattern" tabindex="-1"><a class="header-anchor" href="#cheque-cell-pattern"><span>Cheque Cell Pattern</span></a></h3>
 <p>Implements a mechanism similar to a bank cheque where the sender creates a special cell that can be "cashed" by the receiver. The receiver must provide their own CKB capacity to claim the asset, and the CKB used for the cheque cell is returned to the sender. If the cheque remains unclaimed after 6 epochs, the sender can withdraw the assets and reclaim the capacity.</p>
 <pre><code>Task: Send 50 DUCK coin to receiver.
 
@@ -215,7 +216,7 @@ Sender: [150 DUCK coin + 338 CKB]    Receiver: [300 CKB]
 <li><a href="https://docs.nervos.org/docs/essays/cheque/">Cheque Cell Tutorial</a> - Step-by-step implementation tutorial.</li>
 <li><a href="https://github.com/nervosnetwork/ckb-cheque-script/tree/master/examples">CKB-Cheque Examples</a> - Usage examples and integration guides.</li>
 </ul>
-<h3>CoTA (Compact Token Aggregator) Pattern</h3>
+<h3 id="cota-(compact-token-aggregator)-pattern" tabindex="-1"><a class="header-anchor" href="#cota-(compact-token-aggregator)-pattern"><span>CoTA (Compact Token Aggregator) Pattern</span></a></h3>
 <p>CoTA is an NFT protocol which uses Sparse Merkle Trees (SMT) to manage large amounts of data off-chain while maintaining security guarantees on-chain. CoTA can be thought of as a layer 1.5 protocol that operates internally using the account-model, storing both data and ownership information in a distributed cell structure on top of UTXOs.</p>
 <p>Each user creates a single permanent CoTA cell that becomes part of the distributed asset registry. Inside of each CoTA cell is a single SMT root hash consisting of exactly 32 bytes that provide provable information about the assets contained within the cell. The amount of data remains the same in a CoTA cell regardless of how many NFTs or how much data is associated with the user. An unlimited amount of NFTs can be created and held without increasing state rent costs.</p>
 <p>CoTA builds on its distributed cell structure to add an innovative transfer mechanism that eliminate the immediate onboarding costs for new users to receive assets. CoTA assets operate on layer 1.5, which uses internal ownership tracking that is separate from the cell model. When assets are transferred on CoTA, they are marked for recipients without leaving the sender's cell. This means that CoTA NFTs effectively bypass the state rent requirements, allowing NFTs to be minted for near-zero cost and can be sent to new users who hold no CKB. The caveat being that the receiver cannot transfer an NFT again until they complete the one-time CoTA cell registration process and complete the claim process which moves the NFT from the original sender's CoTA cell to their own CoTA cell.</p>
@@ -306,7 +307,7 @@ Aggregator: Receiver owns 1 FISH NFT. Transfer possible.
 <li><a href="https://github.com/nervina-labs/cota-sdk-js">CoTA SDK JavaScript</a> - JavaScript SDK for CoTA integration.</li>
 <li><a href="https://github.com/nervina-labs/cota-sdk-js/tree/develop/example">CoTA SDK Examples</a> - Usage examples and integration guides.</li>
 </ul>
-<h3>Public Relay Cells Pattern (ACP Enhancement; Experimental)</h3>
+<h3 id="public-relay-cells-pattern-(acp-enhancement%3B-experimental)" tabindex="-1"><a class="header-anchor" href="#public-relay-cells-pattern-(acp-enhancement%3B-experimental)"><span>Public Relay Cells Pattern (ACP Enhancement; Experimental)</span></a></h3>
 <p>Public relay cells are an optional enhancement to the Anyone-Can-Pay pattern that address the concurrency limitations by introducing public storage cells that act as temporary holding areas for token transfers. This pattern solves the collision problem where multiple simultaneous transfers to the same ACP cell would fail due to the deterministic nature of transfers on CKB.</p>
 <p>In addition to increasing throughput to a single address by allowing parallel deposits, relay cells can serve as temporary holding areas for new users who haven't yet deployed their own ACP cells. This allows new users to receive tokens without any upfront CKB requirement, dramatically lowering the barrier to entry into the ecosystem.</p>
 <p>The relay cells are serviced by a decentralized network of fulfillment bots that monitor deposits and deliver tokens to their final destinations. These bots compete to process transfers, earning small fees for providing this collection and delivery service. This creates a permissionless marketplace where anyone can operate a fulfillment bot, ensuring system resilience without single points of failure while creating earning opportunities for operators providing fulfillment services.</p>
@@ -352,7 +353,7 @@ As this standard is still a work in progress, several challenges remain to be ad
 <ul>
 <li><a href="https://talk.nervos.org/t/a-ckb-efficient-and-anti-collision-xudt-transfer-scheme-on-ckb-l1/8765">Public Relay Cells Discussion</a> - Original proposal and community discussion on Nervos Talk.</li>
 </ul>
-<h3>Harbor Pattern (Fractal Standard; Experimental)</h3>
+<h3 id="harbor-pattern-(fractal-standard%3B-experimental)" tabindex="-1"><a class="header-anchor" href="#harbor-pattern-(fractal-standard%3B-experimental)"><span>Harbor Pattern (Fractal Standard; Experimental)</span></a></h3>
 <p>Harbor is a pattern within the Fractal token standard which is currently in early development stages. The Fractal standard takes inspiration from CoTA, using Sparse Merkle Trees (SMT) to manage asset data off-chain while maintaining security guarantees on-chain. However, Fractal utilizes the Cell Model for ownership designation instead of a layer 1.5 account model structure. Harbors have similarities to public relay cells in being publicly available areas for asset storage, but Harbors can be used both as temporary storage and permanent storage.</p>
 <p>A Fractal cell contains a single SMT root hash consisting of exactly 32 bytes, similar to a CoTA cell. The amount of data always remains the same regardless of how many assets are associated with the user, allowing for an unlimited amount of assets to be held without increasing state rent costs. A Fractal cell uses normal locks and allows the owner to control all assets within the cell.</p>
 <p>A Harbor cell is a special kind of Fractal cell, which is created by anyone for public use. Anyone can store a Fractal asset in any Harbor by paying a small "parking fee" to the operator. Multiple Harbors can be created by anyone to create a competitive marketplace that keeps fees reasonable while providing parallelism for concurrent transfers. Should an operator wish to close their Harbor to recoup the CKB being used for state rent, they are free to do so at any time. However, if there are any Fractal assets stored within the harbor they are trying to close, they must migrate them to another open harbor and pay the parking fee for each asset.</p>
@@ -443,7 +444,7 @@ Aggregator: Receiver owns 75 WOLF coin. Transfer possible.
 <li>Transactions are more complex and must be generated using the Fractal SDK in conjunction with an aggregator.</li>
 <li>Emerging incomplete standard with no implementation.</li>
 </ul>
-<h2>Conclusion</h2>
+<h2 id="closing" tabindex="-1"><a class="header-anchor" href="#closing"><span>Closing</span></a></h2>
 <p>The Cell Model's state rent requirement creates unique challenges for asset transfers that have sparked innovative design patterns that offer different trade-offs between simplicity, cost, trust, and user experience.</p>
 <p>This document explores seven distinct transfer patterns for addressing state rent challenges in UTXO-based asset transfers:</p>
 <ol>
@@ -469,7 +470,7 @@ Aggregator: Receiver owns 75 WOLF coin. Transfer possible.
 <p><strong>Harbor (Fractal Standard; Experimental)</strong> - An emerging pattern within the Fractal token standard that combines the use of Sparse Merkle Trees for off-chain data management with decentralized public cells for asset storage. Allows for near zero-cost minting and eliminates state rent for newly onboarded users. However, the standard is in very early development with no current implementation.</p>
 </li>
 </ol>
-<h3>Which Pattern to Use?</h3>
+<h3 id="which-pattern-to-use%3F" tabindex="-1"><a class="header-anchor" href="#which-pattern-to-use%3F"><span>Which Pattern to Use?</span></a></h3>
 <p><strong>For Simple Applications:</strong></p>
 <ul>
 <li>Use "Sender Pays State Rent" for low-volume transfers where simplicity matters most.</li>
