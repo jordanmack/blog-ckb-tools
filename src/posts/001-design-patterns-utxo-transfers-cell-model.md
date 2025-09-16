@@ -7,7 +7,7 @@ date: 2025-09-02
 layout: layouts/post.njk
 
 # STANDARD FIELDS  
-tags: ["post", "utxo", "cell-model", "blockchain", "design-patterns", "cota", "smt"]
+tags: ["post", "utxo", "cell-model", "design-patterns", "state-rent", "transfer-patterns", "blockchain-architecture"]
 author: "Jordan Mack"
 id: "utxo-transfers"  # Used for image folder: /assets/images/posts/utxo-transfers/
 
