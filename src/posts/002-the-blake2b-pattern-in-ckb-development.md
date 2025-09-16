@@ -1,188 +1,148 @@
 ---
 # REQUIRED FIELDS
-title: "The Blake2b Pattern in CKB Development"
-slug: "the-blake2b-pattern-in-ckb-development"
+title: "Using the CKBHash Blake2b Function in CKB Development"
+slug: "using-the-ckbhash-blake2b-function-in-ckb-development"
 permalink: /posts/{{ slug }}/
 date: 2025-09-10
 layout: layouts/post.njk
 
 # STANDARD FIELDS  
-tags: ["post", "cryptography", "blake2b", "development", "smart-contracts"]
+tags: ["post", "ckbhash", "cryptography", "blake2b", "development", "smart-contracts"]
 author: "Jordan Mack"
-id: "ckb-002"  # Used for image folder: /assets/images/posts/ckb-002/
+id: "ckbhash"  # Used for image folder: /assets/images/posts/ckbhash/
 
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2025-09-10  # Only add when post is actually updated
 ---
 
-When working with CKB (Nervos), you'll encounter blake2b hashing everywhere. Understanding this consistent pattern is crucial for CKB development, as it's the cryptographic foundation for addresses, script hashes, and transaction signing.
+When building smart contracts on CKB you are free to use any cryptographic function that you wish to use. However, many of the system scripts and within the commonly used libraries rely on Blake2b.
 
-## The CKB Blake2b Standard
+In this post we describe some of the specific CKB conventions on how to use it properly with the existing foundations. In most cases, you will rely on libraries that handle all of these details for you. However, advanced smart contract designs might benefit from understanding the specifics of how it is commonly used on CKB.
 
-CKB uses a specific configuration of blake2b throughout the platform:
+## The CKB Blake2b Standard (ckbhash)
 
-- **Algorithm**: blake2b-256 (outputs 32 bytes)
-- **Personalization**: "ckb-default-hash"
-- **Common variant**: blake160 (truncated to first 20 bytes)
+Within the libraries you will find a function called "**ckbhash**". This is the a specific configuration of Blake2b:
 
-This standardization ensures consistency and predictability across all CKB components.
+- **Algorithm**: blake2b-256 (outputs 32 bytes).
+- **Personalization**: "ckb-default-hash".
+- **Common Variant**: blake160 (blake2b-256 truncated to first 20 bytes (160 bits)).
 
-## Why Blake2b?
+Blake2b-256 is always used for the ckbhash function. However, you will see some places that reference "blake160". This is still blake2b-256, but the hash hash been truncated to the first 20 byptes (160 bits).
 
-CKB chose blake2b over alternatives like SHA-256 or keccak256 for several reasons:
-
-1. **Performance**: Blake2b is faster than MD5, SHA-1, SHA-2, and SHA-3 on modern 64-bit platforms
-2. **Security**: Provides strong cryptographic guarantees with no known vulnerabilities
-3. **Flexibility**: Supports variable output lengths and personalization
-4. **Simplicity**: No need for HMAC construction; personalization is built-in
+The ckbhash function automatically applies the "ckb-default-hash" personalization, so you never need to manually configure the blake2b parameters when using library functions.
 
 ## Common Uses in CKB
 
-### 1. Public Key to Lock Arg (Blake160)
+The ckbhash function is used throughout CKB for:
 
-The most common pattern - converting a public key to a lock arg:
+1. **Secp256k1 Lock Arg (Blake160)** - The Secp256k1 lock requires a ckbhash of the public key truncated to the first 20 bytes.
+2. **Script Hash Calculation** - Hashing serialized script structures for identification.
+3. **Transaction Hashing** - Creating transaction identifiers (excluding witnesses).
+4. **Transaction Witness Hash** - Hashing the complete serialized transaction including witnesses for block headers.
+5. **Cell Data Hashing** - Generating data hashes for type scripts and cell references.
+6. **Signing Message Construction** - Creating the message to sign by hashing tx hash plus witness data.
+
+### 1. Public Key to Secp256k1 Lock Arg (Blake160)
+
+Converts an secp256k1 public key into the required arg for the commonly used secp256k1_blake160_sighash_all lock, which is used in most wallets.
 
 ```javascript
-import blake2b from "blake2b";
+import { Secp256k1Signer } from "@ckb-ccc/secp256k1";
 
-function publicKeyToLockArg(publicKey) {
-	const blake2bHash = blake2b(
-		32,                                    // Output length: 32 bytes
-		null,                                  // No key
-		null,                                  // No salt
-		new TextEncoder().encode("ckb-default-hash")  // Personalization
-	);
-	
-	blake2bHash.update(hexToUint8Array(publicKey));
-	const hash = blake2bHash.digest();
-	
-	// Take first 20 bytes (160 bits) - this is "blake160"
-	return uint8ArrayToHex(hash.slice(0, 20));
-}
+const signer = new Secp256k1Signer(privateKey);
+const lockArg = await signer.getRecommendedLockScriptArgs();  // Internally: ckbhash(publicKey).slice(0, 20)
 ```
 
 ### 2. Script Hash Calculation
 
-When calculating a script hash, CKB hashes the serialized script structure:
+Generates a unique identifier for any script by hashing its serialized structure, which is used for script identification and locating cells.
 
 ```javascript
-// Using Lumos helper (recommended)
-import {utils} from "@ckb-lumos/base";
-const {computeScriptHash} = utils;
+import { Script } from "@ckb-ccc/core";
 
-const scriptHash = computeScriptHash({
-	codeHash: "0x9bd7e06f...",
-	hashType: "type",
-	args: "0xb39bbc0b3673c7d36450bc14cfcdad2d559c6c64"
-});
+const script = new Script(
+	"0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",	// codeHash
+	"type",																	// hashType
+	"0xb39bbc0b3673c7d36450bc14cfcdad2d559c6c64"							// args
+);
+
+const scriptHash = script.hash();  // Internally: ckbhash(molecule_encode(script))
 ```
 
-### 3. Transaction Signing
+### 3. Transaction Hashing
 
-For transaction signatures, CKB uses the full blake2b-256 hash:
+Creates a unique identifier for transactions by hashing the raw transaction data, which excludes witnesses and is used for transaction references.
 
 ```javascript
-// Transaction signing message construction
-const message = blake2b(32, null, null, 
-	new TextEncoder().encode("ckb-default-hash"))
-	.update(txHash)
-	.update(witnessData)
-	.digest();
+import { Transaction } from "@ckb-ccc/core";
+
+const tx = new Transaction(/* ... */);
+const txHash = tx.hash();  // Internally: ckbhash(molecule_encode(raw_transaction))
 ```
 
-### 4. Cell Data Hashing
+### 4. Transaction Witness Hash
 
-When referencing cells by data hash:
+Computes the complete transaction hash including all witness data, which is used in block headers for the witness merkle tree.
 
 ```javascript
-const dataHash = ckbHash(cellData);  // Full 32-byte blake2b hash
+import { Transaction } from "@ckb-ccc/core";
+
+const tx = new Transaction(/* ... */);
+const witnessHash = tx.hashWithWitness();  // Internally: ckbhash(molecule_encode(full_transaction))
 ```
 
-## The Personalization String
+### 5. Cell Data Hashing
 
-The "ckb-default-hash" personalization is critical. It:
-
-- Prevents cross-protocol attacks
-- Ensures CKB hashes are domain-specific
-- Makes accidental hash collisions with other systems impossible
-
-Never omit this personalization - it's a security feature, not just a convention.
-
-## Blake160 vs Full Hash
-
-**Use Blake160 (20 bytes) for:**
-- Lock args from public keys
-- Compact identifiers where 160 bits of security is sufficient
-
-**Use Full Blake2b (32 bytes) for:**
-- Script hashes
-- Transaction hashes
-- Cell data hashes
-- Any cryptographic commitment requiring maximum security
-
-## Implementation with Lumos
-
-Lumos provides the `ckbHash()` helper that implements the standard pattern:
+Generates a hash of cell data content, which is used by type scripts for data integrity verification and locating cells.
 
 ```javascript
-import {utils} from "@ckb-lumos/base";
-const {ckbHash} = utils;
+import { ckbHasher } from "@ckb-ccc/core";
 
-// Equivalent implementations:
-// Manual
-const manual = blake2b(32, null, null, 
-	new TextEncoder().encode("ckb-default-hash"))
-	.update(data)
-	.digest();
-
-// Lumos helper
-const withLumos = ckbHash(data);
+const hasher = ckbHasher();
+hasher.update(cellData);
+const dataHash = hasher.digest();  // Internally: ckbhash(cellData)
 ```
 
-## Common Pitfalls
+### 6. Signing Message Construction
 
-1. **Forgetting personalization**: Always include "ckb-default-hash"
-2. **Wrong truncation**: Blake160 is first 20 bytes, not last
-3. **Encoding confusion**: Ensure consistent hex/byte array conversions
-4. **Hash type mixing**: Don't confuse blake2b with keccak256 (used in Ethereum)
-
-## Practical Example: Complete Flow
+Builds the final message to be signed by combining transaction hash with witness data, which ensures signatures cover the complete transaction context.
 
 ```javascript
-// Complete example showing the blake2b pattern
-import {ckbHash} from "@ckb-lumos/base";
+import { Signer } from "@ckb-ccc/core";
 
-// 1. Start with private key
-const privateKey = "0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97593d2bc";
-
-// 2. Generate public key
-const publicKey = secp256k1.publicKeyCreate(hexToUint8Array(privateKey));
-
-// 3. Apply blake2b with personalization, truncate to 20 bytes
-const lockArg = ckbHash(publicKey).substring(0, 42); // 0x prefix + 40 hex chars
-
-// 4. Create lock script
-const lockScript = {
-	codeHash: "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
-	hashType: "type",
-	args: lockArg
-};
-
-// 5. Calculate script hash (full blake2b of serialized script)
-const scriptHash = computeScriptHash(lockScript);
+const signature = await signer.signTransaction(tx);  // Internally: sign(ckbhash(txHash + witnessData))
 ```
 
-## Comparison with Other Blockchains
+## Complete Example with CCC
 
-| Blockchain | Hash Function | Public Key → Address |
-|------------|--------------|---------------------|
-| CKB | blake2b-256 | blake160 (first 20 bytes) |
-| Ethereum | keccak256 | Last 20 bytes of keccak256 |
-| Bitcoin | SHA256 + RIPEMD160 | Hash160 (SHA256 then RIPEMD160) |
+This example demonstrates the complete workflow from private key to script hash, showing how ckbhash is used at multiple stages: first to generate the blake160 lock arg from a public key, then to create a unique script identifier.
 
-## Conclusion
+```javascript
+import { Script } from "@ckb-ccc/core";
+import { Secp256k1Signer } from "@ckb-ccc/secp256k1";
 
-The blake2b pattern in CKB is remarkably consistent: always use blake2b-256 with "ckb-default-hash" personalization. Whether you're generating lock args, calculating script hashes, or signing transactions, this pattern remains the same. Understanding this foundation will make your CKB development journey much smoother.
+// Create signer from private key
+const signer = new Secp256k1Signer("0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97593d2bc");
 
-Remember: when in doubt, use the Lumos `ckbHash()` helper - it implements the pattern correctly and saves you from potential mistakes.
+// Get blake160 lock arg
+const lockArg = await signer.getRecommendedLockScriptArgs();
+
+// Create lock script
+const lockScript = new Script(
+	"0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",  // mainnet secp256k1
+	"type",
+	lockArg
+);
+
+// Get script hash
+const scriptHash = lockScript.hash();
+```
+
+## Further Reading
+
+- **[How to Sign a Transaction](https://docs.nervos.org/docs/how-tos/how-to-sign-a-tx)** - Detailed explanation of transaction signing process.
+- **[CCC Documentation](https://docs.nervos.org/docs/sdk-and-devtool/ccc)** - Official CCC usage guide.
+- **[CKB System Scripts Repository](https://github.com/nervosnetwork/ckb-system-scripts)** - Source code for all CKB system scripts.
+- **[CKB RFCs - Transaction Structure (RFC 0022)](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md)** - Defines the official ckbhash function specification.
+- **[CKB RFCs - Genesis Script List (RFC 0024)](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md)** - Lists all system scripts including secp256k1_blake160_sighash_all.
