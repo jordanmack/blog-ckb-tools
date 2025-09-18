@@ -67,6 +67,41 @@ export default function(eleventyConfig) {
 		return str.substring(0, length).trim() + "...";
 	});
 
+	// Add sentence-based truncate filter
+	eleventyConfig.addFilter("truncateSentence", function(str, maxLength = 350) {
+		if (str.length <= maxLength) {
+			return str;
+		}
+		
+		// First truncate to max length
+		let truncated = str.substring(0, maxLength);
+		
+		// Find the last sentence ending (., !, or ?)
+		const sentenceEndings = ['.', '!', '?'];
+		let lastSentenceEnd = -1;
+		
+		for (let ending of sentenceEndings) {
+			const pos = truncated.lastIndexOf(ending);
+			if (pos > lastSentenceEnd) {
+				lastSentenceEnd = pos;
+			}
+		}
+		
+		// If we found a sentence ending and it's not too early (at least 100 chars)
+		if (lastSentenceEnd > 100) {
+			return truncated.substring(0, lastSentenceEnd + 1);
+		}
+		
+		// Otherwise, truncate at word boundary
+		const lastSpace = truncated.lastIndexOf(' ');
+		if (lastSpace > 100) {
+			return truncated.substring(0, lastSpace) + "...";
+		}
+		
+		// Fallback to character truncation
+		return truncated + "...";
+	});
+
 	// Add striptags filter
 	eleventyConfig.addFilter("striptags", function(str) {
 		return str.replace(/<[^>]*>/g, '');
@@ -107,6 +142,7 @@ export default function(eleventyConfig) {
 		}
 		return content;
 	});
+
 
 	// Set input and output directories
 	return {
