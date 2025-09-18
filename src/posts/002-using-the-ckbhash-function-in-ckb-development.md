@@ -20,6 +20,8 @@ When building smart contracts on CKB you are free to use any cryptographic funct
 
 In this post we describe some of the specific CKB conventions on how to use it properly with the existing foundations. In most cases, you will rely on libraries that handle all of these details for you. However, advanced smart contract designs might benefit from understanding the specifics of how it is commonly used on CKB.
 
+[[toc]]
+
 ## The CKB Blake2b Standard (ckbhash)
 
 Within the libraries you will find a function called "**ckbhash**". This is the a specific configuration of Blake2b:
