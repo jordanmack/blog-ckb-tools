@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en" class="h-full"><head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Posts tagged 'cell-model' | Blog.CKB.tools</title>
+	<title>Posts tagged 'cryptography' | Blog.CKB.tools</title>
 	<meta name="description" content="A simple blog built with 11ty and Tailwind CSS">
 	
 	<!-- CSS -->
@@ -44,7 +44,7 @@
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 	<header class="mb-8">
 		<h1 class="text-3xl font-bold content-text mb-4">
-			Posts tagged "cell-model"
+			Posts tagged "cryptography"
 		</h1>
 		<p class="content-text">
 			<a href="/" class="link-green">← Back to all posts</a>
@@ -59,13 +59,13 @@
 			<article class="post-card pb-8">
 				<header class="mb-4">
 					<h2 class="text-xl font-semibold mb-2">
-						<a href="/posts/design-patterns-utxo-transfers-cell-model/" class="content-text link-green">
-							Design Patterns: UTXO Transfers Using the Cell Model
+						<a href="/posts/understanding-ckb-lock-value-relationships/" class="content-text link-green">
+							Understanding CKB Lock Value Relationships
 						</a>
 					</h2>
 					<div class="text-sm mb-3 content-text">
-						<time datetime="2025-09-02">
-							September 2, 2025
+						<time datetime="2025-09-18">
+							September 18, 2025
 						</time>
 					</div>
 					
@@ -73,11 +73,39 @@
 				
 				<div class="mb-4 content-text">
 					
-					This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.
-State rent is essential because it ensures sustainabl...
+					In CKB smart contract development, it is important to understand how different lock-related values connect to each other. These values form a chain of cryptographic relationships that are used throughout smart contract development for purposes such as ownership verification, address generation, and...
 				</div>
 				
-				<a href="/posts/design-patterns-utxo-transfers-cell-model/" class="inline-flex items-center font-medium link-green">
+				<a href="/posts/understanding-ckb-lock-value-relationships/" class="inline-flex items-center font-medium link-green">
+					Read more
+					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+					</svg>
+				</a>
+			</article>
+			
+			<article class="post-card pb-8">
+				<header class="mb-4">
+					<h2 class="text-xl font-semibold mb-2">
+						<a href="/posts/using-the-ckbhash-function-in-ckb-development/" class="content-text link-green">
+							Using the CKBHash Function in CKB Development
+						</a>
+					</h2>
+					<div class="text-sm mb-3 content-text">
+						<time datetime="2025-09-10">
+							September 10, 2025
+						</time>
+					</div>
+					
+				</header>
+				
+				<div class="mb-4 content-text">
+					
+					When building smart contracts on CKB you are free to use any cryptographic function that you wish to use. However, many of the system scripts and within the commonly used libraries rely on Blake2b.
+In this post we describe some of the specific CKB conventions on how to use it properly with the exist...
+				</div>
+				
+				<a href="/posts/using-the-ckbhash-function-in-ckb-development/" class="inline-flex items-center font-medium link-green">
 					Read more
 					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

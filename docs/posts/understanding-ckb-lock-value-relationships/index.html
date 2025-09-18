@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="en" class="h-full"><head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Understanding CKB Lock Value Relationships | Blog.CKB.tools</title>
+	<meta name="description" content="A simple blog built with 11ty and Tailwind CSS">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png">
+	
+	<!-- Theme Detection -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	</script>
+	
+</head>
+<body class="min-h-full flex flex-col">
+	<header class="header-bg border-b border-visible">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex items-center justify-between" style="height: 42px;">
+			<!-- Site Logo/Title -->
+			<div class="flex-shrink-0">
+				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
+					BLOG<small>.ckb.tools</small>
+				</a>
+			</div>
+			
+			<!-- Navigation -->
+			<nav class="flex items-center">
+				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
+			</nav>
+		</div>
+	</div>
+</header>
+	
+	<main class="flex-1">
+		
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+	<header class="mb-8">
+		<h1 class="text-4xl font-bold content-text mb-4">
+			Understanding CKB Lock Value Relationships
+		</h1>
+		<div class="text-sm content-text mb-4">
+			
+			<div class="">
+				By Jordan Mack
+			</div>
+			
+			<div>
+				<time datetime="2025-09-18">
+					September 18, 2025
+				</time>
+				
+			</div>
+		</div>
+		
+	</header>
+
+	<div class="prose prose-lg max-w-none">
+		<p>In CKB smart contract development, it is important to understand how different lock-related values connect to each other. These values form a chain of cryptographic relationships that are used throughout smart contract development for purposes such as ownership verification, address generation, and cross-referencing between different scripts.</p>
+<h2 id="the-value-derivation-chain" tabindex="-1"><a class="header-anchor" href="#the-value-derivation-chain"><span>The Value Derivation Chain</span></a></h2>
+<p>Here's how all lock-related values connect in CKB at a high level:</p>
+<style>
+.diagram-box { background-color: #1a1a1a; border: 1px solid #333333; border-radius: 0.5rem; padding: 1.5rem; margin: 1.5rem 0; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.8; }
+.diagram-line { display: flex; align-items: center; margin-bottom: 0.5rem; }
+.value { color: #4fc3f7; font-weight: 600; display: inline-block; width: 110px; text-align: left; }
+.transform { color: #ffa726; font-style: italic; display: inline-block; width: 260px; text-align: center; margin: 0; }
+.result { color: #66bb6a; font-weight: 600; display: inline-block; width: 110px; text-align: right; }
+.arrow { color: #666666; margin: 0 12px; }
+.legend-value { color: #4fc3f7; font-weight: 600; }
+.legend-transform { color: #ffa726; font-style: italic; }
+.legend-result { color: #66bb6a; font-weight: 600; }
+</style>
+<div class="diagram-box">
+<div class="diagram-line">
+<span class="value">Private Key</span><span class="arrow">→</span><span class="transform">secp256k1 elliptic curve</span><span class="arrow">→</span><span class="result">Public Key</span>
+</div>
+<div class="diagram-line">
+<span class="value">Public Key</span><span class="arrow">→</span><span class="transform">blake160 (ckbhash + truncate)</span><span class="arrow">→</span><span class="result">Lock Arg</span>
+</div>
+<div class="diagram-line">
+<span class="value">Lock Arg</span><span class="arrow">→</span><span class="transform">add code_hash + hash_type</span><span class="arrow">→</span><span class="result">Lock Script</span>
+</div>
+<div class="diagram-line">
+<span class="value">Lock Script</span><span class="arrow">→</span><span class="transform">ckbhash (molecule serialized)</span><span class="arrow">→</span><span class="result">Lock Hash</span>
+</div>
+<div class="diagram-line">
+<span class="value">Lock Script</span><span class="arrow">→</span><span class="transform">bech32m encoding</span><span class="arrow">→</span><span class="result">Address</span>
+</div>
+<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #333;">
+<div class="diagram-line">
+<span class="legend-value">Starting Value</span><span class="arrow">→</span><span class="legend-transform">Transformation</span><span class="arrow">→</span><span class="legend-result">Resulting Value</span>
+</div>
+</div>
+</div>
+<h2 id="understanding-each-value" tabindex="-1"><a class="header-anchor" href="#understanding-each-value"><span>Understanding Each Value</span></a></h2>
+<p>Below we will explain each of the values and their relationships with each other in more detail. On CKB you can use any cryptographic algorithm you want, but most wallets rely on <code>secp256k1</code> because that is what is used for the fallback lock <code>secp256k1-blake160-sighash-all</code>. Our descriptions and examples will all assume this lock.</p>
+<h3 id="private-key-(32-bytes)" tabindex="-1"><a class="header-anchor" href="#private-key-(32-bytes)"><span>Private Key (32 bytes)</span></a></h3>
+<p>The chain starts with a secret private key that is never shared but used to prove ownership. This is your fundamental credential for controlling CKB cells and assets.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token comment">// Private keys are represented as hex strings in CCC.</span>
+<span class="token keyword">const</span> privateKey <span class="token operator">=</span> <span class="token string">"0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97593d2bc"</span><span class="token punctuation">;</span></code></pre>
+<p><strong>Why it matters:</strong> Your private key is the root of all ownership verification in CKB. During transaction validation, you use this key to create digital signatures that prove you control specific cells without revealing the key itself.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=AQDCe585Lnc">Public Key Cryptography (YouTube Video)</a></li>
+</ul>
+<h3 id="public-key-(33-bytes)" tabindex="-1"><a class="header-anchor" href="#public-key-(33-bytes)"><span>Public Key (33 bytes)</span></a></h3>
+<p>The public key is derived from the private key using <code>secp256k1</code> elliptic curve cryptography. This is the shareable counterpart to your private key that enables others to verify your signatures.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>SignerCkbPrivateKey<span class="token punctuation">,</span> ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Initialize CCC client (testnet example).</span>
+<span class="token keyword">const</span> client <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ccc<span class="token punctuation">.</span>ClientPublicTestnet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create a signer from the private key.</span>
+<span class="token keyword">const</span> signer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SignerCkbPrivateKey</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> privateKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> publicKey <span class="token operator">=</span> signer<span class="token punctuation">.</span>publicKey<span class="token punctuation">;</span>
+<span class="token comment">// Example: 0x03fe6c6d09d1a0f70255cddf25c5ed57d41b5c08822ae710dc10f8c88290e0acdf (33 bytes).</span>
+
+<span class="token comment">// Or derive manually using secp256k1.</span>
+<span class="token comment">// const secp256k1 = require('secp256k1');</span>
+<span class="token comment">// const publicKey = "0x" + Buffer.from(secp256k1.publicKeyCreate(Buffer.from(privateKey.slice(2), 'hex'), true)).toString('hex');</span></code></pre>
+<p><strong>Why it matters:</strong> Your public key enables signature verification without exposing your private key. It's also the starting point for generating your unique account identifier (lock arg) that distinguishes your cells from all other users.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=AQDCe585Lnc">Public Key Cryptography (YouTube Video)</a></li>
+</ul>
+<h3 id="lock-arg-(20-bytes)" tabindex="-1"><a class="header-anchor" href="#lock-arg-(20-bytes)"><span>Lock Arg (20 bytes)</span></a></h3>
+<p>The lock arg is generated by applying <code>ckbhash</code> to the public key and taking the first 20 bytes (<code>blake160</code>). This is the same length as both Bitcoin and Ethereum.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>hashCkb<span class="token punctuation">,</span> ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Derive from public key to show the transformation.</span>
+<span class="token keyword">const</span> lockArg <span class="token operator">=</span> <span class="token function">hashCkb</span><span class="token punctuation">(</span>publicKey<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">42</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// Example: "0xc8328aabcd9b9e8e64fbc566c4385c3bdeb219d7" (20 bytes).</span>
+
+<span class="token comment">// Or get it from an address object.</span>
+<span class="token comment">// const addressObj = await signer.getAddressObjSecp256k1();</span>
+<span class="token comment">// const lockArg = addressObj.script.args;</span></code></pre>
+<p><strong>Why it matters:</strong> This value uniquely identifies your "account" when placed in the <code>args</code> field of the <code>secp256k1-blake160-sighash-all</code> lock script. The <code>args</code> value is how the code knows who owns the cell. It serves as an identifier for the basis of authentication, and also a label on cells that can be searched for when building transactions.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="/posts/using-the-ckbhash-function-in-ckb-development/">Using the CKBHash Function in CKB Development</a></li>
+<li><a href="https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c">secp256k1_blake160_sighash_all Script Implementation</a></li>
+</ul>
+<h3 id="lock-script-(structure)" tabindex="-1"><a class="header-anchor" href="#lock-script-(structure)"><span>Lock Script (Structure)</span></a></h3>
+<p>The complete script structure that defines cell ownership. This identifies the script code that is executed with your unique identifier to create a lock that is only accessible with your private key.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>Script<span class="token punctuation">,</span> ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create a lock script using CCC.</span>
+<span class="token keyword">const</span> lockScript <span class="token operator">=</span> ccc<span class="token punctuation">.</span>Script<span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+	<span class="token literal-property property">codeHash</span><span class="token operator">:</span> <span class="token string">"0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"</span><span class="token punctuation">,</span>
+	<span class="token literal-property property">hashType</span><span class="token operator">:</span> <span class="token string">"type"</span><span class="token punctuation">,</span>
+	<span class="token literal-property property">args</span><span class="token operator">:</span> <span class="token string">"0xc8328aabcd9b9e8e64fbc566c4385c3bdeb219d7"</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Or get it from an address object.</span>
+<span class="token comment">// const addressObj = await signer.getAddressObjSecp256k1();</span>
+<span class="token comment">// const lockScript = addressObj.script;</span></code></pre>
+<p><strong>Key components:</strong></p>
+<ul>
+<li><strong><code>codeHash</code></strong>: The hash that identifies the script code to execute.</li>
+<li><strong><code>hashType</code></strong>: Used to indicate how to interpret the code hash.</li>
+<li><strong><code>args</code></strong>: Your unique identifier (the lock arg derived from your public key).</li>
+</ul>
+<p><strong>Why it matters:</strong> A lock script is a structure that defines ownership rules for cells. It specifies script code (smart contract) that will execute to validate ownership and arguments provided to the code (lock arg) that determine who can access it.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="https://docs.nervos.org/docs/script/intro-to-script">Introduction to CKB Script Programming</a></li>
+<li><a href="https://docs-new.nervos.org/docs/dapp/simple-lock">Build a Simple Lock Script</a></li>
+</ul>
+<h3 id="lock-hash-(32-bytes)" tabindex="-1"><a class="header-anchor" href="#lock-hash-(32-bytes)"><span>Lock Hash (32 bytes)</span></a></h3>
+<p>A unique identifier for the complete lock script structure, calculated by hashing the script structure after being serialized with <code>molecule</code>.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>hashCkb<span class="token punctuation">,</span> ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Manual calculation to show the transformation.</span>
+<span class="token keyword">const</span> lockHash <span class="token operator">=</span> <span class="token function">hashCkb</span><span class="token punctuation">(</span>lockScript<span class="token punctuation">.</span><span class="token function">toBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// Example: "0x32e555f3ff8e135cece1351a6a2971518392c1e30375c1e006ad0ce8eac07947".</span>
+
+<span class="token comment">// Or use the built-in method (more common).</span>
+<span class="token comment">// const lockHash = lockScript.hash();</span>
+<span class="token comment">// This performs: hashCkb(molecule_encode(lockScript)).</span></code></pre>
+<p><strong>Why it matters:</strong> A lock script is a structure comprised of a code hash, hash type, and lock args. This complete component structure is what determines ownership of cells, but it's not easily referenced since it is three long fields. By serializing and hashing the lock script into a lock hash we end up with a space-efficient identifier that can be easily referenced by smart contracts.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="https://docs.nervos.org/docs/serialization/serialization-molecule-in-ckb">Serialization and Molecule in CKB</a></li>
+<li><a href="https://github.com/nervosnetwork/molecule">Molecule Serialization Specification</a></li>
+<li><a href="https://docs.nervos.org/docs/serialization/tools-molecule">Molecule Tools Documentation</a></li>
+<li><a href="https://docs.ckb.dev/docs/rfcs/0022-transaction-structure/0022-transaction-structure">Script Hash Calculation in CKB</a></li>
+</ul>
+<h3 id="address-(human-readable)" tabindex="-1"><a class="header-anchor" href="#address-(human-readable)"><span>Address (Human-Readable)</span></a></h3>
+<p>The single line representation of your lock script that encodes all the data about the lock script structure in a human-readable format that's easy to share and has checksum validation to prevent mistakes.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create address from lock script to show the transformation.</span>
+<span class="token keyword">const</span> address <span class="token operator">=</span> ccc<span class="token punctuation">.</span>Address<span class="token punctuation">.</span><span class="token function">fromScript</span><span class="token punctuation">(</span>lockScript<span class="token punctuation">,</span> client<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// Example: "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqwgx292hnvmn68xf779vmzrshpmm6epn4c0cgwga".</span>
+
+<span class="token comment">// Or get it directly from the signer (more common).</span>
+<span class="token comment">// const address = (await signer.getAddressObjSecp256k1()).toString();</span></code></pre>
+<p><strong>Why it matters:</strong> Addresses provide a standardized way to share the complete lock script structure in a way that is human-readable and also reversible. A lock hash is similar in that it provides a more concise way to reference a lock script, but since it uses one-way hashing the full lock script structure cannot be extracted. When transferring funds to someone the full lock script is needed, which is why addresses must be used instead of lock hashes.</p>
+<p><strong>Further Learning:</strong></p>
+<ul>
+<li><a href="https://docs-new.nervos.org/docs/tech-explanation/ckb-address">CKB Address Technical Explanation</a></li>
+<li><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0021-ckb-address-format/0021-ckb-address-format.md">CKB RFC 0021: CKB Address Format</a></li>
+</ul>
+<h2 id="acquiring-values-with-ccc" tabindex="-1"><a class="header-anchor" href="#acquiring-values-with-ccc"><span>Acquiring Values with CCC</span></a></h2>
+<p>Here's how to obtain each lock-related value using CCC as the library was designed to be used. Rather than manually calculating each transformation, CCC provides high-level methods that handle the derivation chain internally:</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span>SignerCkbPrivateKey<span class="token punctuation">,</span> Script<span class="token punctuation">,</span> ccc<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Initialize CCC client.</span>
+<span class="token keyword">const</span> client <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ccc<span class="token punctuation">.</span>ClientPublicTestnet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Use ClientPublicMainnet() for mainnet.</span>
+
+<span class="token comment">// 1. Start with a private key.</span>
+<span class="token keyword">const</span> privateKey <span class="token operator">=</span> <span class="token string">"0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97593d2bc"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create signer from private key.</span>
+<span class="token keyword">const</span> signer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SignerCkbPrivateKey</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> privateKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 2. Get public key from signer.</span>
+<span class="token keyword">const</span> publicKey <span class="token operator">=</span> signer<span class="token punctuation">.</span>publicKey<span class="token punctuation">;</span>
+
+<span class="token comment">// Get complete address object (contains all derived values).</span>
+<span class="token keyword">const</span> addressObj <span class="token operator">=</span> <span class="token keyword">await</span> signer<span class="token punctuation">.</span><span class="token function">getAddressObjSecp256k1</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 3. Extract lock arg from address object.</span>
+<span class="token keyword">const</span> lockArg <span class="token operator">=</span> addressObj<span class="token punctuation">.</span>script<span class="token punctuation">.</span>args<span class="token punctuation">;</span>
+
+<span class="token comment">// 4. Extract lock script from address object.</span>
+<span class="token keyword">const</span> lockScript <span class="token operator">=</span> addressObj<span class="token punctuation">.</span>script<span class="token punctuation">;</span>
+
+<span class="token comment">// 5. Calculate lock hash from lock script.</span>
+<span class="token keyword">const</span> lockHash <span class="token operator">=</span> lockScript<span class="token punctuation">.</span><span class="token function">hash</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 6. Get human-readable address.</span>
+<span class="token keyword">const</span> address <span class="token operator">=</span> addressObj<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Lock Value Chain:"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">1. Private Key: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>privateKey<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">2. Public Key: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>publicKey<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">3. Lock Arg: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>lockArg<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">4. Lock Script:</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">,</span> lockScript<span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">5. Lock Hash: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>lockHash<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">6. Address: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>address<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>For a complete working example with both CCC and Lumos implementations, see the <a href="https://github.com/sonami-tech/lock-value-relationships-demo">Lock Value Relationships Demo (GitHub)</a>.</p>
+<h2 id="further-learning" tabindex="-1"><a class="header-anchor" href="#further-learning"><span>Further Learning</span></a></h2>
+<p>Additional resources and learning materials are available for those interested in deepening their understanding of CKB development.</p>
+<ul>
+<li><a href="https://docs.nervos.org/">Nervos Developer Documentation</a></li>
+<li><a href="https://university.nervos.org/">Nervos University</a></li>
+<li><a href="https://github.com/sonami-tech/lock-value-relationships-demo">Lock Value Relationships Demo (GitHub)</a></li>
+</ul>
+
+	</div>
+
+	<footer class="mt-12 pt-8 border-t border-visible">
+		<div class="flex justify-between items-center">
+			<a href="/" class="link-green font-medium">
+				← Back to posts
+			</a>
+		</div>
+	</footer>
+</article>
+	</main>
+	
+	<footer class="footer-bg border-t border-visible mt-auto">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div class="text-center">
+			<p class="text-xs" style="color: #999999;">
+				© 2021-2025 blog.ckb.tools. All rights reserved.
+			</p>
+		</div>
+	</div>
+</footer>
+
+</body></html>

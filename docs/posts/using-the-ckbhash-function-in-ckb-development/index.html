@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en" class="h-full"><head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Using the CKBHash Function in CKB Development | Blog.CKB.tools</title>
+	<meta name="description" content="A simple blog built with 11ty and Tailwind CSS">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png">
+	
+	<!-- Theme Detection -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	</script>
+	
+</head>
+<body class="min-h-full flex flex-col">
+	<header class="header-bg border-b border-visible">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex items-center justify-between" style="height: 42px;">
+			<!-- Site Logo/Title -->
+			<div class="flex-shrink-0">
+				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
+					BLOG<small>.ckb.tools</small>
+				</a>
+			</div>
+			
+			<!-- Navigation -->
+			<nav class="flex items-center">
+				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
+			</nav>
+		</div>
+	</div>
+</header>
+	
+	<main class="flex-1">
+		
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+	<header class="mb-8">
+		<h1 class="text-4xl font-bold content-text mb-4">
+			Using the CKBHash Function in CKB Development
+		</h1>
+		<div class="text-sm content-text mb-4">
+			
+			<div class="">
+				By Jordan Mack
+			</div>
+			
+			<div>
+				<time datetime="2025-09-10">
+					September 10, 2025
+				</time>
+				
+			</div>
+		</div>
+		
+	</header>
+
+	<div class="prose prose-lg max-w-none">
+		<p>When building smart contracts on CKB you are free to use any cryptographic function that you wish to use. However, many of the system scripts and within the commonly used libraries rely on Blake2b.</p>
+<p>In this post we describe some of the specific CKB conventions on how to use it properly with the existing foundations. In most cases, you will rely on libraries that handle all of these details for you. However, advanced smart contract designs might benefit from understanding the specifics of how it is commonly used on CKB.</p>
+<h2 id="the-ckb-blake2b-standard-(ckbhash)" tabindex="-1"><a class="header-anchor" href="#the-ckb-blake2b-standard-(ckbhash)"><span>The CKB Blake2b Standard (ckbhash)</span></a></h2>
+<p>Within the libraries you will find a function called "<strong>ckbhash</strong>". This is the a specific configuration of Blake2b:</p>
+<ul>
+<li><strong>Algorithm</strong>: blake2b-256 (outputs 32 bytes).</li>
+<li><strong>Personalization</strong>: "ckb-default-hash".</li>
+<li><strong>Common Variant</strong>: blake160 (blake2b-256 truncated to first 20 bytes (160 bits)).</li>
+</ul>
+<p>Blake2b-256 is always used for the ckbhash function. However, you will see some places that reference "blake160". This is still blake2b-256, but the hash hash been truncated to the first 20 byptes (160 bits).</p>
+<p>The ckbhash function automatically applies the "ckb-default-hash" personalization, so you never need to manually configure the blake2b parameters when using library functions.</p>
+<h2 id="common-uses-in-ckb" tabindex="-1"><a class="header-anchor" href="#common-uses-in-ckb"><span>Common Uses in CKB</span></a></h2>
+<p>The ckbhash function is used throughout CKB for:</p>
+<ol>
+<li><strong>Secp256k1 Lock Arg (Blake160)</strong> - The Secp256k1 lock requires a ckbhash of the public key truncated to the first 20 bytes.</li>
+<li><strong>Script Hash Calculation</strong> - Hashing serialized script structures for identification.</li>
+<li><strong>Transaction Hashing</strong> - Creating transaction identifiers (excluding witnesses).</li>
+<li><strong>Transaction Witness Hash</strong> - Hashing the complete serialized transaction including witnesses for block headers.</li>
+<li><strong>Cell Data Hashing</strong> - Generating data hashes for type scripts and cell references.</li>
+<li><strong>Signing Message Construction</strong> - Creating the message to sign by hashing tx hash plus witness data.</li>
+</ol>
+<h3 id="1.-public-key-to-secp256k1-lock-arg-(blake160)" tabindex="-1"><a class="header-anchor" href="#1.-public-key-to-secp256k1-lock-arg-(blake160)"><span>1. Public Key to Secp256k1 Lock Arg (Blake160)</span></a></h3>
+<p>Converts an secp256k1 public key into the required arg for the commonly used secp256k1_blake160_sighash_all lock, which is used in most wallets.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Secp256k1Signer <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/secp256k1"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> signer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Secp256k1Signer</span><span class="token punctuation">(</span>privateKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> lockArg <span class="token operator">=</span> <span class="token keyword">await</span> signer<span class="token punctuation">.</span><span class="token function">getRecommendedLockScriptArgs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: ckbhash(publicKey).slice(0, 20)</span></code></pre>
+<h3 id="2.-script-hash-calculation" tabindex="-1"><a class="header-anchor" href="#2.-script-hash-calculation"><span>2. Script Hash Calculation</span></a></h3>
+<p>Generates a unique identifier for any script by hashing its serialized structure, which is used for script identification and locating cells.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Script <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> script <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Script</span><span class="token punctuation">(</span>
+	<span class="token string">"0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"</span><span class="token punctuation">,</span>	<span class="token comment">// codeHash</span>
+	<span class="token string">"type"</span><span class="token punctuation">,</span>																	<span class="token comment">// hashType</span>
+	<span class="token string">"0xb39bbc0b3673c7d36450bc14cfcdad2d559c6c64"</span>							<span class="token comment">// args</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> scriptHash <span class="token operator">=</span> script<span class="token punctuation">.</span><span class="token function">hash</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: ckbhash(molecule_encode(script))</span></code></pre>
+<h3 id="3.-transaction-hashing" tabindex="-1"><a class="header-anchor" href="#3.-transaction-hashing"><span>3. Transaction Hashing</span></a></h3>
+<p>Creates a unique identifier for transactions by hashing the raw transaction data, which excludes witnesses and is used for transaction references.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Transaction <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> tx <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Transaction</span><span class="token punctuation">(</span><span class="token comment">/* ... */</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> txHash <span class="token operator">=</span> tx<span class="token punctuation">.</span><span class="token function">hash</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: ckbhash(molecule_encode(raw_transaction))</span></code></pre>
+<h3 id="4.-transaction-witness-hash" tabindex="-1"><a class="header-anchor" href="#4.-transaction-witness-hash"><span>4. Transaction Witness Hash</span></a></h3>
+<p>Computes the complete transaction hash including all witness data, which is used in block headers for the witness merkle tree.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Transaction <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> tx <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Transaction</span><span class="token punctuation">(</span><span class="token comment">/* ... */</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> witnessHash <span class="token operator">=</span> tx<span class="token punctuation">.</span><span class="token function">hashWithWitness</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: ckbhash(molecule_encode(full_transaction))</span></code></pre>
+<h3 id="5.-cell-data-hashing" tabindex="-1"><a class="header-anchor" href="#5.-cell-data-hashing"><span>5. Cell Data Hashing</span></a></h3>
+<p>Generates a hash of cell data content, which is used by type scripts for data integrity verification and locating cells.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> ckbHasher <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> hasher <span class="token operator">=</span> <span class="token function">ckbHasher</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+hasher<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>cellData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> dataHash <span class="token operator">=</span> hasher<span class="token punctuation">.</span><span class="token function">digest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: ckbhash(cellData)</span></code></pre>
+<h3 id="6.-signing-message-construction" tabindex="-1"><a class="header-anchor" href="#6.-signing-message-construction"><span>6. Signing Message Construction</span></a></h3>
+<p>Builds the final message to be signed by combining transaction hash with witness data, which ensures signatures cover the complete transaction context.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Signer <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> signature <span class="token operator">=</span> <span class="token keyword">await</span> signer<span class="token punctuation">.</span><span class="token function">signTransaction</span><span class="token punctuation">(</span>tx<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Internally: sign(ckbhash(txHash + witnessData))</span></code></pre>
+<h2 id="complete-example-with-ccc" tabindex="-1"><a class="header-anchor" href="#complete-example-with-ccc"><span>Complete Example with CCC</span></a></h2>
+<p>This example demonstrates the complete workflow from private key to script hash, showing how ckbhash is used at multiple stages: first to generate the blake160 lock arg from a public key, then to create a unique script identifier.</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Script <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/core"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> Secp256k1Signer <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@ckb-ccc/secp256k1"</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create signer from private key</span>
+<span class="token keyword">const</span> signer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Secp256k1Signer</span><span class="token punctuation">(</span><span class="token string">"0xd00c06bfd800d27397002dca6fb0993d5ba6399b4238b2f29ee9deb97593d2bc"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Get blake160 lock arg</span>
+<span class="token keyword">const</span> lockArg <span class="token operator">=</span> <span class="token keyword">await</span> signer<span class="token punctuation">.</span><span class="token function">getRecommendedLockScriptArgs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create lock script</span>
+<span class="token keyword">const</span> lockScript <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Script</span><span class="token punctuation">(</span>
+	<span class="token string">"0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"</span><span class="token punctuation">,</span>  <span class="token comment">// mainnet secp256k1</span>
+	<span class="token string">"type"</span><span class="token punctuation">,</span>
+	lockArg
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Get script hash</span>
+<span class="token keyword">const</span> scriptHash <span class="token operator">=</span> lockScript<span class="token punctuation">.</span><span class="token function">hash</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<h2 id="further-reading" tabindex="-1"><a class="header-anchor" href="#further-reading"><span>Further Reading</span></a></h2>
+<ul>
+<li><strong><a href="https://docs.nervos.org/docs/how-tos/how-to-sign-a-tx">How to Sign a Transaction</a></strong> - Detailed explanation of transaction signing process.</li>
+<li><strong><a href="https://docs.nervos.org/docs/sdk-and-devtool/ccc">CCC Documentation</a></strong> - Official CCC usage guide.</li>
+<li><strong><a href="https://github.com/nervosnetwork/ckb-system-scripts">CKB System Scripts Repository</a></strong> - Source code for all CKB system scripts.</li>
+<li><strong><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md">CKB RFCs - Transaction Structure (RFC 0022)</a></strong> - Defines the official ckbhash function specification.</li>
+<li><strong><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md">CKB RFCs - Genesis Script List (RFC 0024)</a></strong> - Lists all system scripts including secp256k1_blake160_sighash_all.</li>
+</ul>
+
+	</div>
+
+	<footer class="mt-12 pt-8 border-t border-visible">
+		<div class="flex justify-between items-center">
+			<a href="/" class="link-green font-medium">
+				← Back to posts
+			</a>
+		</div>
+	</footer>
+</article>
+	</main>
+	
+	<footer class="footer-bg border-t border-visible mt-auto">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div class="text-center">
+			<p class="text-xs" style="color: #999999;">
+				© 2021-2025 blog.ckb.tools. All rights reserved.
+			</p>
+		</div>
+	</div>
+</footer>
+
+</body></html>
