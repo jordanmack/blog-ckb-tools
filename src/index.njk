@@ -29,11 +29,13 @@ title: "Home"
 							{{ post.data.title }}
 						</a>
 					</h3>
+					{# 
 					<div class="text-sm mb-3 content-text">
 						<time datetime="{{ post.data.date | date('Y-m-d') }}">
 							{{ post.data.date | date("F j, Y") }}
 						</time>
 					</div>
+					#}
 					{# 
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
@@ -50,7 +52,7 @@ title: "Home"
 				</header>
 				
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncate(300) %}
+					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
 					{{ excerpt }}
 				</div>
 				
@@ -72,11 +74,13 @@ title: "Home"
 							{{ post.data.title }}
 						</a>
 					</h3>
+					{# 
 					<div class="text-sm mb-3 content-text">
 						<time datetime="{{ post.data.date | date('Y-m-d') }}">
 							{{ post.data.date | date("F j, Y") }}
 						</time>
 					</div>
+					#}
 					{# 
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
@@ -93,7 +97,7 @@ title: "Home"
 				</header>
 				
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncate(300) %}
+					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
 					{{ excerpt }}
 				</div>
 				
