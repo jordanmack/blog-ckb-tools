@@ -14,6 +14,7 @@ id: "mining-guide-part2"  # Used for image folder: /assets/images/posts/mining-g
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2022-08-15  # Only add when post is actually updated
+post-image: "/assets/images/posts/mining-guide-part2/post-image.jpg"
 ---
 
 If you've been considering mining but have been hesitant about investing, now could be a good time to take a second look.
