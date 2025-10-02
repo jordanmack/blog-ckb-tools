@@ -14,6 +14,7 @@ id: "ckbhash"  # Used for image folder: /assets/images/posts/ckbhash/
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2025-09-10  # Only add when post is actually updated
+post-image: "/assets/images/posts/ckbhash/post-image.jpg"
 ---
 
 When building smart contracts on CKB you are free to use any cryptographic function that you wish to use. However, many of the system scripts and within the commonly used libraries rely on Blake2b.

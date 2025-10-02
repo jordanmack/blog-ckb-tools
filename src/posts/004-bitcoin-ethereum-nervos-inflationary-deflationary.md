@@ -14,6 +14,7 @@ id: "tokenomics-comparison"  # Used for image folder: /assets/images/posts/token
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2022-01-17  # Only add when post is actually updated
+post-image: "/assets/images/posts/tokenomics-comparison/post-image.jpg"
 ---
 
 An introduction to the unique tokenomics of three cryptocurrencies.

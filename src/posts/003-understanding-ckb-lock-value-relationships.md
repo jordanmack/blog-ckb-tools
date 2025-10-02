@@ -14,6 +14,7 @@ id: "lock-value-relationships"  # Used for image folder: /assets/images/posts/lo
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2025-09-10  # Only add when post is actually updated
+post-image: "/assets/images/posts/lock-value-relationships/post-image.jpg"
 ---
 
 In CKB smart contract development, it is important to understand how different lock-related values connect to each other. These values form a chain of cryptographic relationships that are used throughout smart contract development for purposes such as ownership verification, address generation, and cross-referencing between different scripts.

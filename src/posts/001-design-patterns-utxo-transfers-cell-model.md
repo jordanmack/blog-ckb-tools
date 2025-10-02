@@ -14,6 +14,7 @@ id: "utxo-transfers"  # Used for image folder: /assets/images/posts/utxo-transfe
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2025-09-03 # Only add when post is actually updated
+post-image: "/assets/images/posts/utxo-transfers/post-image.jpg"
 ---
 
 This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.
