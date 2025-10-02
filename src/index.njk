@@ -24,7 +24,9 @@ title: "Home"
 			{% for post in pinnedPosts %}
 			<article class="post-card post-card-pinned pb-8">
 				{% if post.data['post-image'] %}
-				<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				<a href="{{ post.url }}">
+					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				</a>
 				{% endif %}
 
 				<header class="mb-4">
@@ -73,7 +75,9 @@ title: "Home"
 			{% for post in regularPosts %}
 			<article class="post-card pb-8">
 				{% if post.data['post-image'] %}
-				<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				<a href="{{ post.url }}">
+					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				</a>
 				{% endif %}
 
 				<header class="mb-4">
