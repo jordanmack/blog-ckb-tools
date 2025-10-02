@@ -43,7 +43,7 @@ The vast majority of ASIC miners are loud enough to give you hearing damage, but
 
 YouTube creator and miner 6figs runs several Goldshell ASICs to mine Nervos CKB, Handshake, and Siacoin. His experience is described as being very positive in regards to noise, "the miners make no more noise than a whisper in a library. In fact, I don't even turn them off while recording video content. It's hard to believe that just two meters away from my microphone, seven crypto miners operate 24/7."
 
-<img src="/assets/images/posts/mining-guide-part2/mining-setup.png" alt="Mining setup with Goldshell ASICs" style="display: block; margin: 16px auto; max-width: 100%;">
+<img src="/assets/images/posts/mining-guide-part2/mining-setup.jpg" alt="Mining setup with Goldshell ASICs" style="display: block; margin: 16px auto; max-width: 100%;">
 
 Of course, simply being quiet is one factor to consider. Keep in mind that quiet miners are not the equivalent of extremely loud miners. Their hashrate is typically a small fraction of the loud miners aimed at the professional market. Fortunately, their energy efficiency seems to be about the same, and the cost is also appropriate for the amount of profit generated.
 
@@ -69,7 +69,7 @@ To give you some context on the recording studio's dimensions, picture a 600 sqf
 
 I ran an experiment in the middle of winter to figure out how much of a difference the miners could make. I turned off all heat sources to get a baseline measurement and found that temperatures in the studio quickly dropped to 45-50 degrees (Fahrenheit). After plugging in the miners, the studio temps raised slowly over a 24-hour period and stabilized between 68-71 degrees."
 
-<img src="/assets/images/posts/mining-guide-part2/studio-heating.png" alt="Studio heated by mining rigs" style="display: block; margin: 16px auto; max-width: 100%;">
+<img src="/assets/images/posts/mining-guide-part2/studio-heating.jpg" alt="Studio heated by mining rigs" style="display: block; margin: 16px auto; max-width: 100%;">
 
 When planning a mining farm of any size, it is important to factor in both the cold months and the warm months. Mining requires full-time operation and mining equipment typically has a limited lifespan of about two to four years before becoming obsolete. If you can only run your equipment for half the year during the cold months, this needs to be taken into consideration before you invest in mining equipment.
 

@@ -125,6 +125,6 @@ That depends…
 
 If you answered "no" to any of these questions, then it's probably time to take a few steps back and seriously consider the possibilities. If you can answer "yes" to all of these questions, then it's time to buy a shovel!
 
-<img src="/assets/images/posts/mining-guide/mining-shovel.png" alt="Mining shovel illustration" style="display: block; margin: 16px auto; max-width: 100%;">
+<img src="/assets/images/posts/mining-guide/mining-shovel.gif" alt="Mining shovel illustration" style="display: block; margin: 16px auto; max-width: 100%;">
 
 <p style="color: #666; font-style: italic; margin-top: 2rem;">Originally published to Wendy's Whitepaper in 2021.</p>
