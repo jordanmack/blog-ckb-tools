@@ -23,20 +23,24 @@ title: "Home"
 			{# Render pinned posts #}
 			{% for post in pinnedPosts %}
 			<article class="post-card post-card-pinned pb-8">
+				{% if post.data['post-image'] %}
+				<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				{% endif %}
+
 				<header class="mb-4">
 					<h3 class="text-xl font-semibold mb-2">
 						<a href="{{ post.url }}" class="content-text link-green">
 							{{ post.data.title }}
 						</a>
 					</h3>
-					{# 
+					{#
 					<div class="text-sm mb-3 content-text">
 						<time datetime="{{ post.data.date | date('Y-m-d') }}">
 							{{ post.data.date | date("F j, Y") }}
 						</time>
 					</div>
 					#}
-					{# 
+					{#
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
 						{% for tag in post.data.tags %}
@@ -50,7 +54,7 @@ title: "Home"
 					{% endif %}
 					#}
 				</header>
-				
+
 				<div class="mb-4 content-text">
 					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
 					{{ excerpt }}
@@ -68,20 +72,24 @@ title: "Home"
 			{# Render regular posts #}
 			{% for post in regularPosts %}
 			<article class="post-card pb-8">
+				{% if post.data['post-image'] %}
+				<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+				{% endif %}
+
 				<header class="mb-4">
 					<h3 class="text-xl font-semibold mb-2">
 						<a href="{{ post.url }}" class="content-text link-green">
 							{{ post.data.title }}
 						</a>
 					</h3>
-					{# 
+					{#
 					<div class="text-sm mb-3 content-text">
 						<time datetime="{{ post.data.date | date('Y-m-d') }}">
 							{{ post.data.date | date("F j, Y") }}
 						</time>
 					</div>
 					#}
-					{# 
+					{#
 					{% if post.data.tags and post.data.tags.length > 0 %}
 					<div class="flex flex-wrap gap-2 mb-3">
 						{% for tag in post.data.tags %}
@@ -95,7 +103,7 @@ title: "Home"
 					{% endif %}
 					#}
 				</header>
-				
+
 				<div class="mb-4 content-text">
 					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
 					{{ excerpt }}

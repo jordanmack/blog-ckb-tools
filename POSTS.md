@@ -75,6 +75,13 @@ To create a new post:
    - **Default**: false if not specified.
    - **Example**: `pinned: true`.
 
+11. **`post-image`** - Homepage preview image.
+   - **Required**: No (optional).
+   - **Format**: Relative path to image.
+   - **Purpose**: Displays as a floating right image on the homepage post list.
+   - **Location**: Should be stored in `/assets/images/posts/[id]/post-image.jpg` (or .png).
+   - **Example**: `post-image: "/assets/images/posts/mining-guide/post-image.jpg"`.
+
 ## Image Storage Convention
 
 - **Path Structure**: `/assets/images/posts/[id]/`.

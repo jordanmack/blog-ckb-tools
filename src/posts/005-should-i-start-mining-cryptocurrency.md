@@ -14,6 +14,7 @@ id: "mining-guide"  # Used for image folder: /assets/images/posts/mining-guide/
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2021-06-01  # Only add when post is actually updated
+post-image: "/assets/images/posts/mining-guide/post-image.jpg"
 ---
 
 Many people are interested in mining, but there are a few important things to consider before investing.

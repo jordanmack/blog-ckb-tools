@@ -17,6 +17,7 @@ id: "ckb-xxx"  # Used for image folder: /assets/images/posts/ckb-xxx/
 # OPTIONAL FIELDS
 # pinned: true  # Uncomment to pin post
 # updated: 2024-01-02  # Only add when post is actually updated
+# post-image: "/assets/images/posts/ckb-xxx/post-image.jpg"  # Homepage preview image (floats right)
 
 # EXCLUDE FROM SITE - REMOVE THIS LINE IN ACTUAL POSTS
 eleventyExcludeFromCollections: true
