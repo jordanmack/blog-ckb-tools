@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en" class="h-full"><head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Are Bitcoin, Ethereum, and Nervos Inflationary or Deflationary? | BLOG.CKB.tools</title>
+	<meta name="description" content="Technical articles and tutorials about CKB blockchain development, smart contracts, and the Cell Model.">
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/assets/css/main.css">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon.png">
+	
+	<!-- Theme Detection -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	</script>
+	
+</head>
+<body class="min-h-full flex flex-col">
+	<header class="header-bg border-b border-visible">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex items-center justify-between" style="height: 42px;">
+			<!-- Site Logo/Title -->
+			<div class="flex-shrink-0">
+				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
+					BLOG<small>.ckb.tools</small>
+				</a>
+			</div>
+			
+			<!-- Navigation -->
+			<nav class="flex items-center">
+				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
+			</nav>
+		</div>
+	</div>
+</header>
+	
+	<main class="flex-1">
+		
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+	<header class="mb-8">
+		<h1 class="text-4xl font-bold content-text mb-4">
+			Are Bitcoin, Ethereum, and Nervos Inflationary or Deflationary?
+		</h1>
+		<div class="text-sm content-text mb-4">
+			
+			<div class="">
+				By Jordan Mack
+			</div>
+			
+			<div>
+				<time datetime="2022-01-17">
+					January 17, 2022
+				</time>
+				
+			</div>
+		</div>
+		
+	</header>
+
+	<div class="prose prose-lg max-w-none">
+		<p>An introduction to the unique tokenomics of three cryptocurrencies.</p>
+<p>Bitcoin, Ethereum, and Nervos are three cryptocurrencies that have all been described to be both inflationary and deflationary. Even though the underlying tokenomics are publicly available, debate continues because the complexity of the subject forbids a simple answer.</p>
+<p>In this article, we will give a high-level explanation of how the tokenomics of each of these three cryptocurrencies operate and explain how each of them can be considered both inflationary and deflationary in different contexts.</p>
+<div class="table-of-contents"><ul><li><a href="#bitcoin---the-original-tokenomic-standard">Bitcoin - The Original Tokenomic Standard</a></li><li><a href="#ethereum---an-experimental-path-forward">Ethereum - An Experimental Path Forward</a></li><li><a href="#nervos---an-evolution-in-tokenomic-design">Nervos - An Evolution in Tokenomic Design</a></li><li><a href="#moving-toward-a-sustainable-future">Moving Toward a Sustainable Future</a></li></ul></div>
+<h2 id="bitcoin---the-original-tokenomic-standard" tabindex="-1"><a class="header-anchor" href="#bitcoin---the-original-tokenomic-standard"><span>Bitcoin - The Original Tokenomic Standard</span></a></h2>
+<p>The tokenomics of Bitcoin were first set into motion with the launch of the mainnet in 2009. Starting with 0 BTC in existence, tokens are created with each block that is mined using PoW until exactly 21 million coins are produced, at which point mining rewards stop completely.</p>
+<p>At launch, the mining rewards were 50 BTC per block, with a new block being created approximately every 10 minutes. At this point, inflation was extremely high because new coins were being created rapidly, but so few coins were in existence. Every four years, the amount of BTC created in the block is cut in half, from 50 BTC, to 25 BTC, to 12.5 BTC, etc. This leads to dramatically lower inflation in the long term.</p>
+<img src="/assets/images/posts/tokenomics-comparison/bitcoin-supply-schedule.png" alt="Bitcoin supply schedule" style="display: block; margin: 0 auto 16px;">
+<p>Once all 21 million coins have been mined, there will be no more created. This means that the currency will effectively be deflationary since no new coins will ever enter circulation, but coins will continue to exit circulation.</p>
+<p>There are several ways that coins can fall out of circulation. The private keys for the coins a person holds can be lost, permanently preventing the coins from being moved again. A person can pass away without leaving their private keys to anyone else. Extremely small fractions of coins leftover from normal transactions, known as dust, can be taken out of circulation over time since the transaction fees for spending them are higher than the coins are worth. Over time, all of these factors continuously reduce the supply of available coins.</p>
+<p>The mining rewards will continue to be paid until approximately the year 2140 when all 21 million BTC have been mined. However, Bitcoin may effectively be deflationary far before that date. At every halving event, the number of new coins coming into existence gets smaller and smaller. At some point, the number of coins exiting circulation will exceed the number of coins being created through mining. It is difficult to estimate exactly when this will occur, but it is very likely to happen long before 2140.</p>
+<h2 id="ethereum---an-experimental-path-forward" tabindex="-1"><a class="header-anchor" href="#ethereum---an-experimental-path-forward"><span>Ethereum - An Experimental Path Forward</span></a></h2>
+<p>The tokenomics of Ethereum are more complex compared to Bitcoin and have changed continuously over the years. Ethereum launched in 2015 with a premine of 60 million ETH and mining rewards of 5 ETH per block, with a new block being created approximately every 13-15 seconds, and slightly smaller rewards are paid to "uncle" blocks which are those which that correctly performed the operation, but were slightly too late to get the full reward. The mining rewards have dropped over the years from 5 ETH, to 3 ETH, and then to 2 ETH. However, unlike Bitcoin, the reward decrease is not following any kind of a predefined schedule. The reward is being manually adjusted by the developers utilizing hard forks.</p>
+<img src="/assets/images/posts/tokenomics-comparison/ethereum-block-rewards.png" alt="Ethereum block rewards" style="display: block; margin: 0 auto 16px;">
+<p>Bitcoin is designed to have a hard cap of exactly 21 million BTC, but Ethereum has no such limit. Ethereum believes that having a hard cap could lead to situations where mining rewards are too low, leaving the network without proper security incentives. For this reason, Ethereum has adopted a policy of "minimum necessary issuance", which results in a projected inflation rate of approximately 4.5% annually by current estimates.</p>
+<p>Ethereum adopted the EIP-1559 standard in 2021, which modifies the way transaction fees are calculated and implements partial burning of the fees received. Since the release of EIP-1559, approximately 75% of the fees that would have gone to miners have instead been burned. To date, this has resulted in an issuance reduction of at least 65%.</p>
+<p>Under EIP-1559 the higher the transaction fees, the more ETH is burned. When the fees are particularly high, more ETH may be burned in a block than is created in the block reward. The creates a negative net issuance and deflation.</p>
+<img src="/assets/images/posts/tokenomics-comparison/ethereum-eip1559-burn.png" alt="Ethereum EIP-1559 burn mechanism" style="display: block; margin: 0 auto 16px;">
+<p>However, negative net issuance can only occur when fees are extremely high, during periods of extreme congestion. Even though there have been periods of deflation, the net issuance over any significant period currently remains positive. This means that Ethereum has become less inflationary than previously, but it is currently still inflationary.</p>
+<img src="/assets/images/posts/tokenomics-comparison/ethereum-net-issuance.png" alt="Ethereum net issuance" style="display: block; margin: 0 auto 16px;">
+<p>The current design specification for Ethereum 2.0 plans to further reduce issuance once the full transition from PoW to PoS is made. At this point, Ethereum could very well enter the realm of being truly deflationary. However, the timelines for Ethereum 2.0 continue to get pushed out further, and design specifications are subject to change. It may still be a while before we see how this plays out in the real world.</p>
+<h2 id="nervos---an-evolution-in-tokenomic-design" tabindex="-1"><a class="header-anchor" href="#nervos---an-evolution-in-tokenomic-design"><span>Nervos - An Evolution in Tokenomic Design</span></a></h2>
+<p>Nervos' tokenomic design is based on several aspects of both Bitcoin and Ethereum, but with added incentive alignment for all parties involved. Nervos launched in 2019 with a premine of 33.6 billion CKBytes and has a total supply that is inflationary in order to pay for security, similar to Ethereum. However, Nervos also uses a predefined block reward system that halves every four years and has a built-in inflation shelter that effectively makes the currency deflationary for long-term holders, similar to Bitcoin.</p>
+<p>When a new network is first launched, the value of the native token is low. This is expected, and just like Bitcoin and Ethereum, Nervos pays extra subsidies to miners in order to secure the network in the first few years of its existence. Nervos uses a process called Base Issuance to accomplish this.</p>
+<p>Base Issuance is very similar to Bitcoin in several ways. Miners are paid a reward in CKBytes for computational resources for securing the network using PoW. Over time, the assets stored on the network will gain value, which increases the value of the CKByte. In turn, this increases the security level and necessitates fewer subsidies. Base Issuance follows a predetermined inflationary schedule, halving the subsidy amount every four years, and eventually terminating when the threshold of 33.6 billion CKBytes is reached.</p>
+<p>As Base Issuance decreases over time, some have speculated that the incentive to miners will not provide adequate security if it is only paid with transaction fees in the far future. Miners require long-term incentives that are directly aligned with ensuring the data in Nervos is preserved. Secondary Issuance was created to address both of these issues.</p>
+<p>Secondary Issuance creates a consistent 1.344 billion CKBytes every year. These CKBytes are created using inflation, but it does not affect everyone equally. Nervos uses "targeted inflation" which is distributed to miners, Nervos DAO depositors, and the treasury fund based on the utilization of the blockchain state.</p>
+<p>Users who store data in the blockchain state are required to pay state rent to the miners responsible for securing the data. Instead of requiring users to make manual payments, targeted inflation is used to pay the miners in a completely automatic and transparent way. State rent is extremely important for the long-term preservation of data because storing and distributing data is a job with continuous costs. A one-time cost in the form of a transaction fee does not make sense long-term, because miners may stop securing the data if costs continue to accrue but there is no longer a reward for doing the job.</p>
+<p>Long-term holders can protect themselves from the targeted inflation by locking their unused CKBytes in the Nervos DAO. Users will be paid interest on their CKBytes at a rate that exactly matches the inflation created by Secondary Issuance. The Nervos DAO often gets labeled as a staking system, but in actuality, it is strictly an inflation shelter. Using the Nervos DAO gives a user interest that completely excludes users from the effects of Secondary Issuance.</p>
+<p>Any CKBytes that are created from Secondary Issuance but are unused by state rent and the Nervos DAO are currently being burned. However, in the future, these funds can be deposited into a treasury fund with consent from the community. This will help pay for long-term development on the Nervos ecosystem in the future.</p>
+<p>Users of the Nervos DAO are protected from the inflationary effects of Secondary Issuance, which means they are only subject to the inflationary effects of Base Issuance, which decreases by 50% every four years. Just like with Bitcoin, the number of coins exiting circulation will eventually exceed the number of coins being created through mining, leading to the same deflationary scenario for all holders.</p>
+<img src="/assets/images/posts/tokenomics-comparison/nervos-issuance-model.png" alt="Nervos issuance model" style="display: block; margin: 0 auto 16px;">
+<h2 id="moving-toward-a-sustainable-future" tabindex="-1"><a class="header-anchor" href="#moving-toward-a-sustainable-future"><span>Moving Toward a Sustainable Future</span></a></h2>
+<p>Bitcoin, Ethereum, and Nervos are each taking their own unique approach to tokenomics. However, there is no way to know exactly what the long-term result of each approach will be. Even with meticulous thought and planning, assumptions must be made about how the world will be decades beyond our current reach.</p>
+<p>Back in 2009, when Bitcoin was first launched, no one could have predicted how much the industry would change over the next decade. What started out as vague possibilities were slowly shaped by time into innovations which are now changing the world we live in.</p>
+<p>We are now witnessing the foundations of tomorrow's technology being built right before our very eyes. This is no longer just our future, but also the future of our children, and our children's children. Their future will be shaped by the technology we build today. This is why it is absolutely essential that these foundations are able to withstand the challenges of today, and remain sustainable for the decades still to come.</p>
+<p style="color: #666; font-style: italic; margin-top: 2rem;">Originally published to Wendy's Whitepaper in 2022.</p>
+
+	</div>
+
+	<footer class="mt-12 pt-8 border-t border-visible">
+		<div class="flex justify-between items-center">
+			<a href="/" class="link-green font-medium">
+				← Back to posts
+			</a>
+		</div>
+	</footer>
+</article>
+	</main>
+	
+	<footer class="footer-bg border-t border-visible mt-auto">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div class="text-center">
+			<p class="text-xs" style="color: #999999;">
+				© 2021-2025 blog.ckb.tools. All rights reserved.
+			</p>
+		</div>
+	</div>
+</footer>
+
+</body></html>
