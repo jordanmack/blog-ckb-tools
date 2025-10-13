@@ -1,65 +1,99 @@
 <!DOCTYPE html><html lang="en" class="h-full"><head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Posts tagged 'lock-script' | BLOG.CKB.tools</title>
-	<meta name="description" content="Technical articles and tutorials about CKB blockchain development, smart contracts, and the Cell Model.">
-	
+	<title>Posts tagged 'lock-script' | Sōnami Blog</title>
+	<meta name="description" content="Insights and updates from Sōnami - Where innovative technology meets creative brilliance">
+
 	<!-- CSS -->
 	<link rel="stylesheet" href="/assets/css/main.css">
-	
+
 	<!-- Favicon -->
 	<link rel="icon" type="image/png" href="/favicon.png">
-	
+
 	<!-- Theme Detection -->
 	<script>
-		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-			document.documentElement.classList.add('dark')
+		// Apply theme to html element immediately to prevent flash
+		(function() {
+			const theme = localStorage.getItem('theme') || 'system';
+			const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+			if (isDark) {
+				document.documentElement.classList.add('dark');
+			}
+		})();
+
+		// Theme management: supports 'light', 'dark', or 'system'
+		function updateTheme() {
+			const theme = localStorage.getItem('theme') || 'system';
+			const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+			if (isDark) {
+				document.documentElement.classList.add('dark');
+				if (document.body) document.body.classList.add('dark');
+			} else {
+				document.documentElement.classList.remove('dark');
+				if (document.body) document.body.classList.remove('dark');
+			}
+
+			// Update logo if it exists
+			const logo = document.getElementById('sonami-logo');
+			if (logo) {
+				logo.src = isDark ? '/assets/images/sonami-logo-light-text.png' : '/assets/images/sonami-logo.png';
+			}
+		}
+
+		// Listen for system preference changes
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
+		// Apply theme once DOM is ready
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', updateTheme);
 		} else {
-			document.documentElement.classList.remove('dark')
+			updateTheme();
 		}
 	</script>
-	
+
 </head>
 <body class="min-h-full flex flex-col">
 	<header class="header-bg border-b border-visible">
 	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="flex items-center justify-between" style="height: 42px;">
+		<div class="flex items-center justify-between py-3">
 			<!-- Site Logo/Title -->
 			<div class="flex-shrink-0">
-				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
-					BLOG<small>.ckb.tools</small>
+				<a href="/" class="font-semibold content-text text-lg">
+					Sōnami Blog
 				</a>
 			</div>
-			
-			<!-- Navigation -->
-			<nav class="flex items-center">
-				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
-			</nav>
+
+			<!-- Theme Toggle -->
+			<button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle cursor-pointer" aria-label="Toggle theme" title="System Theme">
+				◐
+			</button>
 		</div>
 	</div>
 </header>
-	
+
 	<main class="flex-1">
 		
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 	<header class="mb-8">
 		<h1 class="text-3xl font-bold content-text mb-4">
 			Posts tagged "lock-script"
 		</h1>
 		<p class="content-text">
-			<a href="/" class="link-green">← Back to all posts</a>
+			<a href="/" class="link-blue">← Back to all posts</a>
 		</p>
 	</header>
 
 	<section>
 		
 		
-		<div class="space-y-8">
+		<div class="space-y-4 sm:space-y-6">
 			
-			<article class="post-card pb-8">
+			<article class="post-card flow-root">
 				<header class="mb-4">
 					<h2 class="text-xl font-semibold mb-2">
-						<a href="/posts/understanding-ckb-lock-value-relationships/" class="content-text link-green">
+						<a href="/posts/understanding-ckb-lock-value-relationships/" class="content-text link-blue">
 							Understanding CKB Lock Value Relationships
 						</a>
 					</h2>
@@ -76,7 +110,7 @@
 					In CKB smart contract development, it is important to understand how different lock-related values connect to each other. These values form a chain of cryptographic relationships that are used throughout smart contract development for purposes such as ownership verification, address generation, and...
 				</div>
 				
-				<a href="/posts/understanding-ckb-lock-value-relationships/" class="inline-flex items-center font-medium link-green">
+				<a href="/posts/understanding-ckb-lock-value-relationships/" class="inline-flex items-center font-medium link-blue">
 					Read more
 					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -89,15 +123,99 @@
 	</section>
 </div>
 	</main>
-	
+
 	<footer class="footer-bg border-t border-visible mt-auto">
-	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-		<div class="text-center">
-			<p class="text-xs" style="color: #999999;">
-				© 2021-2025 blog.ckb.tools. All rights reserved.
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Main Footer Content -->
+		<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+			<!-- About Section - Takes up 2 columns (1/2 width) -->
+			<div class="md:col-span-2">
+				<h3 class="font-semibold content-text mb-3">About</h3>
+				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+					Insights and updates from Sōnami where innovative technology meets creative brilliance.
+				</p>
+				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+					Exploring blockchain, AI, and emerging technologies. We specialize in Nervos CKB development and cutting-edge decentralized solutions.
+				</p>
+			</div>
+
+			<!-- Quick Links - Takes up 1 column (1/4 width) -->
+			<div>
+				<h3 class="font-semibold content-text mb-3">Quick Links</h3>
+				<ul class="space-y-2 text-sm">
+					<li>
+						<a href="/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">All Posts</a>
+					</li>
+					<li>
+						<a href="https://sonami.cc" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Sōnami Home</a>
+					</li>
+					<li>
+						<a href="https://sonami.cc#contact" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact Us</a>
+					</li>
+				</ul>
+			</div>
+
+			<!-- Topics - Takes up 1 column (1/4 width) -->
+			<div>
+				<h3 class="font-semibold content-text mb-3">Topics</h3>
+				<ul class="space-y-2 text-sm">
+					<li>
+						<a href="/tags/development/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Blockchain Development</a>
+					</li>
+					<li>
+						<a href="/tags/smart-contracts/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Smart Contracts</a>
+					</li>
+					<li>
+						<a href="/tags/nervos/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Nervos CKB</a>
+					</li>
+					<li>
+						<a href="/tags/mining/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Mining</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- Copyright -->
+		<div class="text-center pt-6 border-t border-slate-200 dark:border-slate-800">
+			<p class="text-xs text-slate-500 dark:text-slate-500">
+				© 2025 Sonami Inc. All rights reserved.
 			</p>
 		</div>
 	</div>
 </footer>
+
+	<!-- Theme Toggle Script -->
+	<script>
+		function toggleTheme() {
+			const currentTheme = localStorage.getItem('theme') || 'system';
+			const themes = ['system', 'light', 'dark'];
+			const currentIndex = themes.indexOf(currentTheme);
+			const nextTheme = themes[(currentIndex + 1) % themes.length];
+
+			localStorage.setItem('theme', nextTheme);
+			updateTheme();
+
+			// Update button text and logo
+			const button = document.getElementById('theme-toggle');
+			if (button) {
+				const icons = { system: '◐', light: '☀', dark: '☾' };
+				const titles = { system: 'System Theme', light: 'Light Theme', dark: 'Dark Theme' };
+				button.textContent = icons[nextTheme];
+				button.title = titles[nextTheme];
+			}
+		}
+
+		// Initialize button on page load
+		window.addEventListener('DOMContentLoaded', () => {
+			const button = document.getElementById('theme-toggle');
+			if (button) {
+				const currentTheme = localStorage.getItem('theme') || 'system';
+				const icons = { system: '◐', light: '☀', dark: '☾' };
+				const titles = { system: 'System Theme', light: 'Light Theme', dark: 'Dark Theme' };
+				button.textContent = icons[currentTheme];
+				button.title = titles[currentTheme];
+			}
+		});
+	</script>
 
 </body></html>
