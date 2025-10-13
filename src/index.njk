@@ -63,7 +63,7 @@ title: "Home"
 				</header>
 
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
+					{% set excerpt = post.templateContent | striptags | decodeEntities | truncateSentence(350) %}
 					{{ excerpt }}
 				</div>
 				
@@ -114,7 +114,7 @@ title: "Home"
 				</header>
 
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncateSentence(350) %}
+					{% set excerpt = post.templateContent | striptags | decodeEntities | truncateSentence(350) %}
 					{{ excerpt }}
 				</div>
 				

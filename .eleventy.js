@@ -72,32 +72,33 @@ export default function(eleventyConfig) {
 		if (str.length <= maxLength) {
 			return str;
 		}
-		
+
 		// First truncate to max length
 		let truncated = str.substring(0, maxLength);
-		
-		// Find the last sentence ending (., !, or ?)
-		const sentenceEndings = ['.', '!', '?'];
+
+		// Find the last sentence ending (., !, or ?) that is followed by:
+		// - End of string, OR
+		// - Whitespace followed by capital letter (likely start of next sentence)
+		const sentenceEndingPattern = /[.!?](?:\s+[A-Z]|\s*$)/g;
 		let lastSentenceEnd = -1;
-		
-		for (let ending of sentenceEndings) {
-			const pos = truncated.lastIndexOf(ending);
-			if (pos > lastSentenceEnd) {
-				lastSentenceEnd = pos;
-			}
+		let match;
+
+		while ((match = sentenceEndingPattern.exec(truncated)) !== null) {
+			// Store position of the punctuation mark (not the whitespace after)
+			lastSentenceEnd = match.index;
 		}
-		
+
 		// If we found a sentence ending and it's not too early (at least 100 chars)
 		if (lastSentenceEnd > 100) {
 			return truncated.substring(0, lastSentenceEnd + 1);
 		}
-		
+
 		// Otherwise, truncate at word boundary
 		const lastSpace = truncated.lastIndexOf(' ');
 		if (lastSpace > 100) {
 			return truncated.substring(0, lastSpace) + "...";
 		}
-		
+
 		// Fallback to character truncation
 		return truncated + "...";
 	});
@@ -105,6 +106,17 @@ export default function(eleventyConfig) {
 	// Add striptags filter
 	eleventyConfig.addFilter("striptags", function(str) {
 		return str.replace(/<[^>]*>/g, '');
+	});
+
+	// Add HTML entity decode filter
+	eleventyConfig.addFilter("decodeEntities", function(str) {
+		return str
+			.replace(/&quot;/g, '"')
+			.replace(/&amp;/g, '&')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
+			.replace(/&#39;/g, "'")
+			.replace(/&apos;/g, "'");
 	});
 
 	// Add current year filter

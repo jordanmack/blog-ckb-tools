@@ -61,7 +61,7 @@ eleventyComputed:
 				</header>
 				
 				<div class="mb-4 content-text">
-					{% set excerpt = post.templateContent | striptags | truncate(300) %}
+					{% set excerpt = post.templateContent | striptags | decodeEntities | truncate(300) %}
 					{{ excerpt }}
 				</div>
 				
