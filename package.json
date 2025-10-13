@@ -21,7 +21,7 @@
     "dev": "run-p dev:*",
     "dev:eleventy": "eleventy --serve --port=8080",
     "dev:tailwind": "bunx tailwindcss -i ./src/assets/css/main.css -o ./docs/assets/css/main.css --watch",
-    "build": "run-s build:*",
+    "build": "run-s clean build:*",
     "build:tailwind": "bunx tailwindcss -i ./src/assets/css/main.css -o ./docs/assets/css/main.css --minify",
     "build:eleventy": "eleventy",
     "clean": "rm -rf docs",
