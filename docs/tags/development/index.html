@@ -93,6 +93,34 @@
 			<article class="post-card flow-root">
 				<header class="mb-4">
 					<h2 class="text-xl font-semibold mb-2">
+						<a href="/posts/understanding-ckb-lock-value-relationships/" class="content-text link-blue">
+							Understanding CKB Lock Value Relationships
+						</a>
+					</h2>
+					<div class="text-sm mb-3 content-text">
+						<time datetime="2025-09-18">
+							September 18, 2025
+						</time>
+					</div>
+					
+				</header>
+				
+				<div class="mb-4 content-text">
+					
+					In CKB smart contract development, it is important to understand how different lock-related values connect to each other. These values form a chain of cryptographic relationships that are used throughout smart contract development for purposes such as ownership verification, address generation, and...
+				</div>
+				
+				<a href="/posts/understanding-ckb-lock-value-relationships/" class="inline-flex items-center font-medium link-blue">
+					Read more
+					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+					</svg>
+				</a>
+			</article>
+			
+			<article class="post-card flow-root">
+				<header class="mb-4">
+					<h2 class="text-xl font-semibold mb-2">
 						<a href="/posts/using-the-ckbhash-function-in-ckb-development/" class="content-text link-blue">
 							Using the CKBHash Function in CKB Development
 						</a>
@@ -119,6 +147,35 @@ In this post we describe some of the specific CKB conventions on how to use it p
 				</a>
 			</article>
 			
+			<article class="post-card flow-root">
+				<header class="mb-4">
+					<h2 class="text-xl font-semibold mb-2">
+						<a href="/posts/design-patterns-utxo-transfers-cell-model/" class="content-text link-blue">
+							Design Patterns: UTXO Transfers Using the Cell Model
+						</a>
+					</h2>
+					<div class="text-sm mb-3 content-text">
+						<time datetime="2025-09-02">
+							September 2, 2025
+						</time>
+					</div>
+					
+				</header>
+				
+				<div class="mb-4 content-text">
+					
+					This document explores different patterns for transferring digital assets between two parties using the Nervos CKB Cell Model. While focused on the CKB blockchain, these patterns may also apply to other UTXO blockchains that implement state rent.
+State rent is essential because it ensures sustainabl...
+				</div>
+				
+				<a href="/posts/design-patterns-utxo-transfers-cell-model/" class="inline-flex items-center font-medium link-blue">
+					Read more
+					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+					</svg>
+				</a>
+			</article>
+			
 		</div>
 		
 	</section>
@@ -132,12 +189,19 @@ In this post we describe some of the specific CKB conventions on how to use it p
 			<!-- About Section - Takes up 2 columns (1/2 width) -->
 			<div class="md:col-span-2">
 				<h3 class="font-semibold content-text mb-3">About</h3>
-				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
-					Insights and updates from Sōnami where innovative technology meets creative brilliance.
+				<!-- Single paragraph for small screens -->
+				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed text-justify sm:hidden">
+					Insights and updates from Sōnami on blockchain, AI, and emerging technologies. Exploring decentralized innovation across multiple ecosystems, including Nervos CKB and other UTXO-based blockchains that continue to evolve and push forward the boundaries of blockchain innovation.
 				</p>
-				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-					Exploring blockchain, AI, and emerging technologies. We specialize in Nervos CKB development and cutting-edge decentralized solutions.
-				</p>
+				<!-- Two paragraphs for larger screens -->
+				<div class="hidden sm:block">
+					<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3 text-left">
+						Insights and updates from Sōnami on blockchain, AI, and emerging technologies.
+					</p>
+					<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed text-left">
+						Exploring decentralized innovation across multiple ecosystems, including Nervos CKB and other UTXO-based blockchains that continue to evolve and push forward the boundaries of blockchain innovation.
+					</p>
+				</div>
 			</div>
 
 			<!-- Quick Links - Takes up 1 column (1/4 width) -->
@@ -171,6 +235,9 @@ In this post we describe some of the specific CKB conventions on how to use it p
 					</li>
 					<li>
 						<a href="/tags/mining/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Mining</a>
+					</li>
+					<li>
+						<a href="/tags/utxo/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">UTXO</a>
 					</li>
 				</ul>
 			</div>

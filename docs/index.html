@@ -289,12 +289,19 @@ When cryptocurrency is making headlines it usually means the price is booming an
 			<!-- About Section - Takes up 2 columns (1/2 width) -->
 			<div class="md:col-span-2">
 				<h3 class="font-semibold content-text mb-3">About</h3>
-				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
-					Insights and updates from Sōnami where innovative technology meets creative brilliance.
+				<!-- Single paragraph for small screens -->
+				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed text-justify sm:hidden">
+					Insights and updates from Sōnami on blockchain, AI, and emerging technologies. Exploring decentralized innovation across multiple ecosystems, including Nervos CKB and other UTXO-based blockchains that continue to evolve and push forward the boundaries of blockchain innovation.
 				</p>
-				<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-					Exploring blockchain, AI, and emerging technologies. We specialize in Nervos CKB development and cutting-edge decentralized solutions.
-				</p>
+				<!-- Two paragraphs for larger screens -->
+				<div class="hidden sm:block">
+					<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3 text-left">
+						Insights and updates from Sōnami on blockchain, AI, and emerging technologies.
+					</p>
+					<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed text-left">
+						Exploring decentralized innovation across multiple ecosystems, including Nervos CKB and other UTXO-based blockchains that continue to evolve and push forward the boundaries of blockchain innovation.
+					</p>
+				</div>
 			</div>
 
 			<!-- Quick Links - Takes up 1 column (1/4 width) -->
@@ -328,6 +335,9 @@ When cryptocurrency is making headlines it usually means the price is booming an
 					</li>
 					<li>
 						<a href="/tags/mining/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Mining</a>
+					</li>
+					<li>
+						<a href="/tags/utxo/" class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">UTXO</a>
 					</li>
 				</ul>
 			</div>
