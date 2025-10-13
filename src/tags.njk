@@ -10,20 +10,20 @@ eleventyComputed:
   title: "Posts tagged '{{ tag }}'"
 ---
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 	<header class="mb-8">
 		<h1 class="text-3xl font-bold content-text mb-4">
 			Posts tagged "{{ tag }}"
 		</h1>
 		<p class="content-text">
-			<a href="/" class="link-green">← Back to all posts</a>
+			<a href="/" class="link-blue">← Back to all posts</a>
 		</p>
 	</header>
 
 	<section>
 		{% set taggedPosts = collections.post | reverse %}
 		{% set filteredPosts = [] %}
-		
+
 		{%- for post in taggedPosts -%}
 			{%- if post.data.tags and (tag in post.data.tags) -%}
 				{%- set filteredPosts = (filteredPosts.push(post), filteredPosts) -%}
@@ -31,12 +31,12 @@ eleventyComputed:
 		{%- endfor -%}
 
 		{% if filteredPosts.length > 0 %}
-		<div class="space-y-8">
+		<div class="space-y-4 sm:space-y-6">
 			{% for post in filteredPosts %}
-			<article class="post-card pb-8">
+			<article class="post-card flow-root">
 				<header class="mb-4">
 					<h2 class="text-xl font-semibold mb-2">
-						<a href="{{ post.url }}" class="content-text link-green">
+						<a href="{{ post.url }}" class="content-text link-blue">
 							{{ post.data.title }}
 						</a>
 					</h2>
@@ -65,7 +65,7 @@ eleventyComputed:
 					{{ excerpt }}
 				</div>
 				
-				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-green">
+				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-blue">
 					Read more
 					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

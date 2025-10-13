@@ -3,11 +3,16 @@ layout: layouts/base.njk
 title: "Home"
 ---
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+	<!-- Logo Section -->
+	<div class="text-center mb-8 sm:mb-12">
+		<img id="sonami-logo" src="/assets/images/sonami-logo.png" alt="Sōnami" class="mx-auto w-32 sm:w-48 h-auto" />
+	</div>
+
 	<section>
-		
+
 		{% if collections.post and collections.post.length > 0 %}
-		<div class="space-y-4">
+		<div class="space-y-4 sm:space-y-6">
 			{# Display pinned posts first #}
 			{% set pinnedPosts = [] %}
 			{% set regularPosts = [] %}
@@ -22,16 +27,16 @@ title: "Home"
 			
 			{# Render pinned posts #}
 			{% for post in pinnedPosts %}
-			<article class="post-card post-card-pinned pb-8">
+			<article class="post-card post-card-pinned flow-root">
 				{% if post.data['post-image'] %}
 				<a href="{{ post.url }}">
-					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" class="mb-4 sm:mb-0 sm:float-right sm:ml-4 max-w-full sm:max-w-[200px] rounded-lg">
 				</a>
 				{% endif %}
 
 				<header class="mb-4">
 					<h3 class="text-xl font-semibold mb-2">
-						<a href="{{ post.url }}" class="content-text link-green">
+						<a href="{{ post.url }}" class="content-text link-blue">
 							{{ post.data.title }}
 						</a>
 					</h3>
@@ -62,7 +67,7 @@ title: "Home"
 					{{ excerpt }}
 				</div>
 				
-				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-green">
+				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-blue">
 					Read more
 					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -73,16 +78,16 @@ title: "Home"
 			
 			{# Render regular posts #}
 			{% for post in regularPosts %}
-			<article class="post-card pb-8">
+			<article class="post-card flow-root">
 				{% if post.data['post-image'] %}
 				<a href="{{ post.url }}">
-					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" style="float: right; margin-left: 1rem; margin-bottom: 1rem; max-width: 200px; border-radius: 0.5rem;">
+					<img src="{{ post.data['post-image'] }}" alt="{{ post.data.title }}" class="mb-4 sm:mb-0 sm:float-right sm:ml-4 max-w-full sm:max-w-[200px] rounded-lg">
 				</a>
 				{% endif %}
 
 				<header class="mb-4">
 					<h3 class="text-xl font-semibold mb-2">
-						<a href="{{ post.url }}" class="content-text link-green">
+						<a href="{{ post.url }}" class="content-text link-blue">
 							{{ post.data.title }}
 						</a>
 					</h3>
@@ -113,7 +118,7 @@ title: "Home"
 					{{ excerpt }}
 				</div>
 				
-				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-green">
+				<a href="{{ post.url }}" class="inline-flex items-center font-medium link-blue">
 					Read more
 					<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
