@@ -8,7 +8,7 @@ layout: layouts/post.njk
 
 # STANDARD FIELDS
 tags: ["post", "mining", "asic", "cryptocurrency", "bear-market", "nervos"]
-author: "Jordan Mack and Kyle Christie (6figs)"
+author: "Jordan Mack and Kyle Figs (6figs)"
 id: "mining-guide-part2"  # Used for image folder: /assets/images/posts/mining-guide-part2/
 
 # OPTIONAL FIELDS
