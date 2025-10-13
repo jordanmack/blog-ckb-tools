@@ -1,17 +1,23 @@
 <header class="header-bg border-b border-visible">
 	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="flex items-center justify-between" style="height: 42px;">
+		<div class="flex items-center justify-between py-3">
 			<!-- Site Logo/Title -->
 			<div class="flex-shrink-0">
-				<a href="/" class="font-bold content-text" style="font-family: Tahoma, Arial, sans-serif; font-size: 18px;">
-					BLOG<small>.ckb.tools</small>
+				<a href="/" class="font-semibold content-text text-lg">
+					Sōnami Blog
 				</a>
 			</div>
-			
-			<!-- Navigation -->
-			<nav class="flex items-center">
-				<a href="https://ckb.tools" class="nav-link" style="font-family: Tahoma, Arial, sans-serif;">← Back to CKB.tools</a>
-			</nav>
+
+			<!-- Theme Toggle -->
+			<button
+				id="theme-toggle"
+				onclick="toggleTheme()"
+				class="theme-toggle cursor-pointer"
+				aria-label="Toggle theme"
+				title="System Theme"
+			>
+				◐
+			</button>
 		</div>
 	</div>
 </header>

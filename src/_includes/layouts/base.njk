@@ -3,32 +3,100 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{% if title %}{{ title }} | {% endif %}{{ site.title or "Blog.CKB.tools" }}</title>
-	<meta name="description" content="{{ description or site.description or 'A simple blog built with 11ty and Tailwind CSS' }}">
-	
+	<title>{% if title %}{{ title }} | {% endif %}Sōnami Blog</title>
+	<meta name="description" content="{{ description or 'Insights and updates from Sōnami - Where innovative technology meets creative brilliance' }}">
+
 	<!-- CSS -->
 	<link rel="stylesheet" href="/assets/css/main.css">
-	
+
 	<!-- Favicon -->
 	<link rel="icon" type="image/png" href="/favicon.png">
-	
+
 	<!-- Theme Detection -->
 	<script>
-		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-			document.documentElement.classList.add('dark')
+		// Apply theme to html element immediately to prevent flash
+		(function() {
+			const theme = localStorage.getItem('theme') || 'system';
+			const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+			if (isDark) {
+				document.documentElement.classList.add('dark');
+			}
+		})();
+
+		// Theme management: supports 'light', 'dark', or 'system'
+		function updateTheme() {
+			const theme = localStorage.getItem('theme') || 'system';
+			const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+			if (isDark) {
+				document.documentElement.classList.add('dark');
+				if (document.body) document.body.classList.add('dark');
+			} else {
+				document.documentElement.classList.remove('dark');
+				if (document.body) document.body.classList.remove('dark');
+			}
+
+			// Update logo if it exists
+			const logo = document.getElementById('sonami-logo');
+			if (logo) {
+				logo.src = isDark ? '/assets/images/sonami-logo-light-text.png' : '/assets/images/sonami-logo.png';
+			}
+		}
+
+		// Listen for system preference changes
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
+		// Apply theme once DOM is ready
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', updateTheme);
 		} else {
-			document.documentElement.classList.remove('dark')
+			updateTheme();
 		}
 	</script>
-	
+
 </head>
 <body class="min-h-full flex flex-col">
 	{% include "partials/header.njk" %}
-	
+
 	<main class="flex-1">
 		{{ content | safe }}
 	</main>
-	
+
 	{% include "partials/footer.njk" %}
+
+	<!-- Theme Toggle Script -->
+	<script>
+		function toggleTheme() {
+			const currentTheme = localStorage.getItem('theme') || 'system';
+			const themes = ['system', 'light', 'dark'];
+			const currentIndex = themes.indexOf(currentTheme);
+			const nextTheme = themes[(currentIndex + 1) % themes.length];
+
+			localStorage.setItem('theme', nextTheme);
+			updateTheme();
+
+			// Update button text and logo
+			const button = document.getElementById('theme-toggle');
+			if (button) {
+				const icons = { system: '◐', light: '☀', dark: '☾' };
+				const titles = { system: 'System Theme', light: 'Light Theme', dark: 'Dark Theme' };
+				button.textContent = icons[nextTheme];
+				button.title = titles[nextTheme];
+			}
+		}
+
+		// Initialize button on page load
+		window.addEventListener('DOMContentLoaded', () => {
+			const button = document.getElementById('theme-toggle');
+			if (button) {
+				const currentTheme = localStorage.getItem('theme') || 'system';
+				const icons = { system: '◐', light: '☀', dark: '☾' };
+				const titles = { system: 'System Theme', light: 'Light Theme', dark: 'Dark Theme' };
+				button.textContent = icons[currentTheme];
+				button.title = titles[currentTheme];
+			}
+		});
+	</script>
 </body>
 </html>
