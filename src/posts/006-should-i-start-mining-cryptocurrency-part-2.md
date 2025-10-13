@@ -7,7 +7,7 @@ date: 2022-06-24
 layout: layouts/post.njk
 
 # STANDARD FIELDS
-tags: ["post", "mining", "asic", "cryptocurrency", "bear-market"]
+tags: ["post", "mining", "asic", "cryptocurrency", "bear-market", "nervos"]
 author: "Jordan Mack and Kyle Christie (6figs)"
 id: "mining-guide-part2"  # Used for image folder: /assets/images/posts/mining-guide-part2/
 
