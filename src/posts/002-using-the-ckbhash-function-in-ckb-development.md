@@ -7,7 +7,7 @@ date: 2025-09-10
 layout: layouts/post.njk
 
 # STANDARD FIELDS  
-tags: ["post", "ckbhash", "blake2b", "cryptography", "development", "hashing", "smart-contracts"]
+tags: ["post", "ckbhash", "blake2b", "cryptography", "development", "hashing", "smart-contracts", "nervos", "ckb"]
 author: "Jordan Mack"
 id: "ckbhash"  # Used for image folder: /assets/images/posts/ckbhash/
 

@@ -7,7 +7,7 @@ date: 2025-09-18
 layout: layouts/post.njk
 
 # STANDARD FIELDS  
-tags: ["post", "lock-script", "addresses", "cryptography", "keys", "scripts", "smart-contracts"]
+tags: ["post", "lock-script", "addresses", "cryptography", "keys", "scripts", "smart-contracts", "nervos", "ckb"]
 author: "Jordan Mack"
 id: "lock-value-relationships"  # Used for image folder: /assets/images/posts/lock-value-relationships/
 

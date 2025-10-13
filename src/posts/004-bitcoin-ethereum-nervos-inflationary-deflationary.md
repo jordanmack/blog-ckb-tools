@@ -7,7 +7,7 @@ date: 2022-01-17
 layout: layouts/post.njk
 
 # STANDARD FIELDS
-tags: ["post", "tokenomics", "bitcoin", "ethereum", "nervos"]
+tags: ["post", "tokenomics", "bitcoin", "ethereum", "nervos", "ckb"]
 author: "Jordan Mack"
 id: "tokenomics-comparison"  # Used for image folder: /assets/images/posts/tokenomics-comparison/
 
